@@ -1,8 +1,12 @@
 package com.example.attendxbackendv2.datalayer.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -11,8 +15,6 @@ import lombok.*;
  * The class is a simple
  */
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 @ToString
 public class DepartmentEntity{
@@ -43,4 +45,28 @@ public class DepartmentEntity{
     @Column(name = "description", nullable = false)
     @Size(min = 16 , max = 256, message = "Description should be between 8 and 60 characters")
     private String description;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonManagedReference
+    private List<LecturerEntity> registeredLecturers;
+
+    public DepartmentEntity(String departmentName, String description){
+        this.departmentName = departmentName;
+        this.description = description;
+        this.registeredLecturers = new ArrayList<>();
+    }
+
+    public DepartmentEntity(){
+        this.departmentName = this.description = null;
+        this.registeredLecturers = new ArrayList<>();
+    }
+
+    public void addLecturer(LecturerEntity lecturerEntity){
+        this.registeredLecturers.add(lecturerEntity);
+    }
+
+    public void removeLecturer(LecturerEntity lecturerEntity){
+        this.registeredLecturers.remove(lecturerEntity);
+    }
 }

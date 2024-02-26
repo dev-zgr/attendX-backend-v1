@@ -2,6 +2,7 @@ package com.example.attendxbackendv2.presentationlayer.exceptionHandler;
 
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ErrorResponseDTO;
 import com.example.attendxbackendv2.servicelayer.exceptions.DepartmentAlreadyExistsException;
+import com.example.attendxbackendv2.servicelayer.exceptions.LecturerAlreadyExistException;
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -64,6 +65,19 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DepartmentAlreadyExistsException.class)
     public ResponseEntity<ErrorResponseDTO> handleDepartmentAlreadyExistsException(DepartmentAlreadyExistsException exception,
                                                                                  WebRequest webRequest){
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
+                webRequest.getDescription(false),
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(LecturerAlreadyExistException.class)
+    public ResponseEntity<ErrorResponseDTO> handleLecturerAlreadyExistsException(LecturerAlreadyExistException exception,
+                                                                                   WebRequest webRequest){
         ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
                 webRequest.getDescription(false),
                 HttpStatus.BAD_REQUEST,

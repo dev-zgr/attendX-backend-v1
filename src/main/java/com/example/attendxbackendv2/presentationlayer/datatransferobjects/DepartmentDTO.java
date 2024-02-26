@@ -2,11 +2,8 @@ package com.example.attendxbackendv2.presentationlayer.datatransferobjects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.ToString;
 
 @Schema(
         name = "DepartmentDTO",
