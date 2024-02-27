@@ -1,5 +1,6 @@
 package com.example.attendxbackendv2.presentationlayer.controllers;
 
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.DepartmentDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ErrorResponseDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.LecturerDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ResponseDTO;
@@ -106,5 +107,53 @@ public class LecturerController {
                 .status(HttpStatus.OK)
                 .body(lecturerService.getAllLecturers(pageNo, ascending));
     }
+
+
+    @Operation(
+            summary = "Fetch Lecturer by email REST API",
+            description = "Fetch lecturer details by ID from the attendX application" +
+                    "This will be mainly used to show all the lecturer details in the UI" +
+                    "This section fetches the email, first and last name, password, phone" +
+                    " number, department, and address of the lecturer"
+    )
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "HTTP Status OK",
+                            content = @Content(
+                                    schema = @Schema(implementation = DepartmentDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "HTTP Status Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "HTTP Status Bad Request it may be causing due to invalid input or department not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "HTTP Status Not Found it may be causing due trying to access non-existing lecturer",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    )
+            })
+    @GetMapping(path = "/lecturer/{email}", consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<LecturerDTO> getLecturerByEmail(@PathVariable String email, @RequestParam(value = "get-details", defaultValue = "true") boolean getDetails) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(lecturerService.getLecturerByEmail(email, getDetails));
+    }
+
 
 }

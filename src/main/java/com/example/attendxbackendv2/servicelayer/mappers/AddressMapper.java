@@ -18,6 +18,7 @@ public class AddressMapper {
         addressDTO.setStreetFirstLine(addressEmbeddable.getStreetFirstLine());
         addressDTO.setStreetSecondLine(addressEmbeddable.getStreetSecondLine());
         addressDTO.setCity(addressEmbeddable.getCity());
+        addressDTO.setState(addressEmbeddable.getState());
         addressDTO.setCountry(addressEmbeddable.getCountry());
         addressDTO.setZipCode(addressEmbeddable.getZipCode());
         return addressDTO;

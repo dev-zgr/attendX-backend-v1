@@ -50,7 +50,7 @@ public class LecturerServiceImpl implements LecturerService {
         }
 
         DepartmentEntity departmentEntity = departmentRepository.findByDepartmentNameIgnoreCase(lecturerDTO.getDepartment()).get();
-        LecturerEntity lecturerEntity = LecturerMapper.mapLecturerDTOToLecturerEntity(new LecturerEntity(), lecturerDTO , new AddressEmbeddable());
+        LecturerEntity lecturerEntity = LecturerMapper.mapLecturerDTOToLecturerEntity(new LecturerEntity(), lecturerDTO, new AddressEmbeddable());
         lecturerEntity.setRegisteredDepartment(departmentEntity);
         departmentEntity.addLecturer(lecturerEntity);
         lecturerRepository.save(lecturerEntity);
@@ -65,12 +65,24 @@ public class LecturerServiceImpl implements LecturerService {
         } else {
             pageable = PageRequest.of(pageNo, pageSize, Sort.by("firstName").descending());
         }
-        List<LecturerEntity> lecturerEntities =  lecturerRepository.findAll(pageable).getContent();
+        List<LecturerEntity> lecturerEntities = lecturerRepository.findAll(pageable).getContent();
         return lecturerEntities.stream()
                 .map(lecturerEntity -> LecturerMapper
                         .mapLecturerEntityToLecturerDTO(lecturerEntity,
                                 new LecturerDTO(),
                                 new AddressDTO(),
-                                true)).toList();
+                                false)).toList();
+    }
+
+    @Override
+    public LecturerDTO getLecturerByEmail(String email, boolean getDetails) throws ResourceNotFoundException {
+        LecturerEntity lecturer = lecturerRepository.findLecturerEntityByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Lecturer", "email", email));
+        return LecturerMapper.mapLecturerEntityToLecturerDTO(lecturer,
+                new LecturerDTO(),
+                new AddressDTO(),
+                getDetails);
+
+
     }
 }

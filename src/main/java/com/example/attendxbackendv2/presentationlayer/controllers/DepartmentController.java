@@ -96,8 +96,15 @@ public class DepartmentController {
                             )
                     ),
                     @ApiResponse(
-                            responseCode = "400",
+                            responseCode = "404",
                             description = "HTTP Status Bad Request it may be causing due to invalid input or department not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "HTTP Status Not Found it may be causing due trying to access non-existing lecturer",
                             content = @Content(
                                     schema = @Schema(implementation = ErrorResponseDTO.class)
                             )

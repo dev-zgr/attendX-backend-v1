@@ -24,4 +24,15 @@ public interface LecturerService {
      * @return
      */
     List<LecturerDTO> getAllLecturers(int pageNo, boolean ascending);
+
+    /**
+     * Fetch lecturer details by email string.
+     * @param email the email of the requested lecturer
+     * @param getDetails the fetch details. If true, fetches the lecturer details. If false, fetches only the email and name
+     *                   of the lecturer. Less lecture increases resilience for the application when presenting the data
+     *
+     * @return the requested LecturerDTO if found
+     * @throws ResourceNotFoundException if no such lecturer found with the specified email
+     */
+    LecturerDTO getLecturerByEmail(String email, boolean getDetails) throws ResourceNotFoundException;
 }
