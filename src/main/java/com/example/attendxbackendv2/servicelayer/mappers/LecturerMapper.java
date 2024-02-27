@@ -8,6 +8,7 @@ import com.example.attendxbackendv2.presentationlayer.datatransferobjects.Lectur
 
 public class LecturerMapper {
 
+
     public static LecturerEntity mapLecturerDTOToLecturerEntity(LecturerEntity lecturerEntity, LecturerDTO lecturerDTO, AddressEmbeddable addressEmbeddable) {
         lecturerEntity.setFirstName(lecturerDTO.getFirstName());
         lecturerEntity.setLastName(lecturerDTO.getLastName());

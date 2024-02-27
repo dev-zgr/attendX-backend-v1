@@ -113,8 +113,8 @@ public class DepartmentController {
     @GetMapping(path = "/department/{departmentName}",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<DepartmentDTO> getDepartmentByName(@PathVariable String departmentName, @RequestParam boolean fetchDetails) {
-        return ResponseEntity.ok(departmentService.fetchDepartmentDetailsByDepartmentName(departmentName, fetchDetails));
+    public ResponseEntity<DepartmentDTO> getDepartmentByName(@PathVariable String departmentName, @RequestParam(name = "get-details") boolean getDetails) {
+        return ResponseEntity.ok(departmentService.fetchDepartmentDetailsByDepartmentName(departmentName, getDetails));
     }
 
 

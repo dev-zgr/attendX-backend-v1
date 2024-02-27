@@ -1,9 +1,12 @@
 package com.example.attendxbackendv2.presentationlayer.datatransferobjects;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+
+import java.util.List;
 
 @Schema(
         name = "DepartmentDTO",
@@ -28,6 +31,9 @@ public class DepartmentDTO {
             example = "Department of Engineering serves as a hub for research and education in the field of engineering and technology."
     )
     private String description;
+
+    @JsonManagedReference
+    private List<LecturerDTO> lecturers;
 }
 
 

@@ -1,12 +1,16 @@
 package com.example.attendxbackendv2.servicelayer.implementations;
 
 import com.example.attendxbackendv2.datalayer.entities.DepartmentEntity;
+import com.example.attendxbackendv2.datalayer.entities.LecturerEntity;
 import com.example.attendxbackendv2.datalayer.repositories.DepartmentRepository;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.AddressDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.DepartmentDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.LecturerDTO;
 import com.example.attendxbackendv2.servicelayer.exceptions.DepartmentAlreadyExistsException;
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
 import com.example.attendxbackendv2.servicelayer.interfaces.DepartmentService;
 import com.example.attendxbackendv2.servicelayer.mappers.DepartmentMapper;
+import com.example.attendxbackendv2.servicelayer.mappers.LecturerMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
@@ -42,15 +47,17 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public DepartmentDTO fetchDepartmentDetailsByDepartmentName(String departmentName, boolean fetchDetails) throws ResourceNotFoundException {
+        DepartmentEntity departmentEntity = departmentRepository.findByDepartmentNameIgnoreCase(departmentName)
+                .orElseThrow(() -> new ResourceNotFoundException("Department", "departmentName", departmentName));
+        DepartmentDTO departmentDTO = DepartmentMapper.mapToDepartmentDTO(departmentEntity, new DepartmentDTO());
         if (fetchDetails) {
-            // TODO extend this method to fetch department details
-        } else {
-            // find the department by name
-            DepartmentEntity departmentEntity = departmentRepository.findByDepartmentNameIgnoreCase(departmentName)
-                    .orElseThrow(() -> new ResourceNotFoundException("Department", "departmentName", departmentName));
-            return DepartmentMapper.mapToDepartmentDTO(departmentEntity, new DepartmentDTO());
+            departmentDTO.setLecturers(
+                    departmentEntity.getRegisteredLecturers().stream().map(
+                            lecturerEntity -> LecturerMapper.mapLecturerEntityToLecturerDTO(lecturerEntity, new LecturerDTO(), new AddressDTO(), false)
+                    ).toList()
+            );
         }
-        return null;
+        return departmentDTO;
     }
 
     @Override
@@ -83,7 +90,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         } else {
             pageable = PageRequest.of(pageNo, pageSize, Sort.by("departmentName").descending());
         }
-        List<DepartmentEntity> departmentEntities =  departmentRepository.findAll(pageable).getContent();
+        List<DepartmentEntity> departmentEntities = departmentRepository.findAll(pageable).getContent();
         return departmentEntities.stream()
                 .map(departmentEntity -> DepartmentMapper
                         .mapToDepartmentDTO(departmentEntity, new DepartmentDTO())).toList();
