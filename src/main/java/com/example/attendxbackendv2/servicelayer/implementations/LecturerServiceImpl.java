@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 
 import java.util.List;
 
@@ -98,7 +99,7 @@ public class LecturerServiceImpl implements LecturerService {
                 lecturerRepository.findLecturerEntityByEmailIgnoreCase(lecturerDTO.getEmail()).get();
         // Get the old department entity
         DepartmentEntity oldDepartmentEntity =
-                lecturerToUpdate.getRegisteredDepartment();
+                departmentRepository.findByDepartmentNameIgnoreCase(lecturerToUpdate.getRegisteredDepartment().getDepartmentName()).get();
 
         // Find the new department of the Lecturer
         DepartmentEntity newDepartmentEntity =
@@ -107,17 +108,35 @@ public class LecturerServiceImpl implements LecturerService {
         // update other fields on Lecturer
         LecturerMapper.mapLecturerDTOToLecturerEntity(lecturerToUpdate, lecturerDTO, new AddressEmbeddable());
 
-
         // if the department has changed
         if (oldDepartmentEntity.getDepartmentId() != newDepartmentEntity.getDepartmentId()) {
-            //Create relationship
-            lecturerToUpdate.setRegisteredDepartment(newDepartmentEntity);
-        }
 
-        lecturerRepository.save(lecturerToUpdate);
+            oldDepartmentEntity.removeLecturer(lecturerToUpdate);
+            departmentRepository.save(oldDepartmentEntity);
+
+            lecturerToUpdate.setRegisteredDepartment(newDepartmentEntity);
+            lecturerRepository.save(lecturerToUpdate);
+        }else{
+            lecturerRepository.save(lecturerToUpdate);
+        }
 
         isUpdated = true;
 
         return isUpdated;
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteLecturer(String email) {
+        LecturerEntity lecturer = lecturerRepository.findLecturerEntityByEmailIgnoreCase(email).orElseThrow(
+                () -> new ResourceNotFoundException("Lecturer", "email", email)
+        );
+        //break the relationship
+        var department = lecturer.getRegisteredDepartment();
+        department.removeLecturer(lecturer);
+        departmentRepository.save(department);
+        lecturer.setRegisteredDepartment(null);
+        lecturerRepository.delete(lecturer);
+        return true;
     }
 }

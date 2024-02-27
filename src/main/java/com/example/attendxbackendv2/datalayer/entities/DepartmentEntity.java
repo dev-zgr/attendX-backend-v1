@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -66,6 +67,12 @@ public class DepartmentEntity{
     }
 
     public void removeLecturer(LecturerEntity lecturerEntity){
-        this.registeredLecturers.remove(lecturerEntity);
+        Iterator<LecturerEntity> iterator = registeredLecturers.iterator();
+        while (iterator.hasNext()) {
+            LecturerEntity lecturer = iterator.next();
+            if (lecturer.getEmail().equals(lecturerEntity.getEmail())) {
+                iterator.remove();
+            }
+        }
     }
 }

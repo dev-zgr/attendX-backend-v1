@@ -45,4 +45,12 @@ public interface LecturerService {
      * lecturer or trying to change the department of lecturer to non-existing department
      */
     boolean updateLecturer(LecturerDTO lecturerDTO) throws ResourceNotFoundException;
+
+    /**
+     * Deletes the lecturer by its email. This method is subject to update currently
+     * it breaks the relationship between Department and Lecturer.
+     * @param email  the email of the requested lecturer to be deleted
+     * @return true if entity deleted successfully, false otherwise
+     */
+    boolean deleteLecturer(String email);
 }

@@ -4,6 +4,7 @@ import com.example.attendxbackendv2.presentationlayer.datatransferobjects.Depart
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ErrorResponseDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.LecturerDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ResponseDTO;
+import com.example.attendxbackendv2.servicelayer.contants.DepartmentConstants;
 import com.example.attendxbackendv2.servicelayer.contants.LecturerContents;
 import com.example.attendxbackendv2.servicelayer.interfaces.LecturerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -203,6 +205,50 @@ public class LecturerController {
     public ResponseEntity<ResponseDTO> updateLecturer(@Valid @RequestBody LecturerDTO lecturerDTO) {
         boolean isUpdated = lecturerService.updateLecturer(lecturerDTO);
         if (isUpdated) {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseDTO(LecturerContents.STATUS_200, LecturerContents.MESSAGE_200));
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.EXPECTATION_FAILED)
+                    .body(new ResponseDTO(LecturerContents.STATUS_417, LecturerContents.MESSAGE_417_UPDATE));
+        }
+    }
+
+    @Operation(
+            summary = "Delete Lecturer REST API",
+            description = "Delete Lecturer from the AttendX application"
+    )
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "202",
+                            description = "HTTP Status ACCEPTED",
+                            content = @Content(
+                                    schema = @Schema(implementation = ResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "HTTP Status Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "417",
+                            description = "HTTP Status Expectation failed  it may occurs due anomalies in AttendX system",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    )
+            }
+    )
+    @DeleteMapping(path = "/lecturer/{email}",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ResponseDTO> deleteLecturer(@PathVariable  String email) {
+        boolean isDeleted = lecturerService.deleteLecturer(email);
+        if (isDeleted) {
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ResponseDTO(LecturerContents.STATUS_200, LecturerContents.MESSAGE_200));
