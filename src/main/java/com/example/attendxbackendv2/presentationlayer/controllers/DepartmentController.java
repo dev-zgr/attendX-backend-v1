@@ -67,7 +67,7 @@ public class DepartmentController {
             )
     }
     )
-    @PostMapping(path = "department", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(path = "/department", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO> createDepartment(@Valid @RequestBody DepartmentDTO departmentDTO) {
         departmentService.createDepartment(departmentDTO);
         return ResponseEntity.status(201).body(new ResponseDTO(
@@ -103,7 +103,7 @@ public class DepartmentController {
                             )
                     )
             })
-    @GetMapping(path = "department/{departmentName}",
+    @GetMapping(path = "/department/{departmentName}",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<DepartmentDTO> getDepartmentByName(@PathVariable String departmentName, @RequestParam boolean fetchDetails) {
@@ -134,11 +134,11 @@ public class DepartmentController {
                     )
             }
     )
-    @GetMapping(path = "department",
+    @GetMapping(path = "/department",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<List<DepartmentDTO>> getAllDepartments(
-            @RequestParam(name = "page-no") int pageNo,
+            @RequestParam(name = "page-no", defaultValue = "0") int pageNo,
             @RequestParam(name = "ascending", defaultValue = "false") boolean ascending,
             @RequestParam(name = "get-details", defaultValue = "false") boolean getDetails) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -174,7 +174,7 @@ public class DepartmentController {
                     )
             }
     )
-    @PutMapping(path = "department",
+    @PutMapping(path = "/department",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO> updateDepartment(@Valid @RequestBody DepartmentDTO departmentDTO) {
@@ -213,7 +213,7 @@ public class DepartmentController {
                     )
             }
     )
-    @DeleteMapping(path = "department",
+    @DeleteMapping(path = "/department",
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO> deleteDepartment(@RequestParam(name = "department_name", defaultValue = "null") @Size(min = 8, max = 60) String departmentName) {
         boolean isDeleted = departmentService.deleteDepartment(departmentName);

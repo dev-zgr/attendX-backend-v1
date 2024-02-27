@@ -7,14 +7,15 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @ToString
 @Entity
 @Data
 public class LecturerEntity extends UserBaseEntity{
 
+
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_id")
     private DepartmentEntity registeredDepartment;
 
     public LecturerEntity(String firstName, String lastName, String email, String phoneNumber,String password, AddressEmbeddable address,

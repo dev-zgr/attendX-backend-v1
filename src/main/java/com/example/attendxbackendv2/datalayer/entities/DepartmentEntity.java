@@ -47,7 +47,6 @@ public class DepartmentEntity{
     private String description;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
     @JsonManagedReference
     private List<LecturerEntity> registeredLecturers;
 

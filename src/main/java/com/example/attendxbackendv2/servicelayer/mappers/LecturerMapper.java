@@ -18,13 +18,18 @@ public class LecturerMapper {
         return lecturerEntity;
     }
 
-    public static LecturerDTO mapLecturerEntityToLecturerDTO(LecturerEntity lecturerEntity, LecturerDTO lecturerDTO, AddressDTO addressDTO) {
+    public static LecturerDTO mapLecturerEntityToLecturerDTO(LecturerEntity lecturerEntity, LecturerDTO lecturerDTO, AddressDTO addressDTO, boolean simplify) {
+
         lecturerDTO.setFirstName(lecturerEntity.getFirstName());
         lecturerDTO.setLastName(lecturerEntity.getLastName());
+        lecturerDTO.setDepartment(lecturerEntity.getRegisteredDepartment().getDepartmentName());
         lecturerDTO.setEmail(lecturerEntity.getEmail());
-        lecturerDTO.setPassword(lecturerEntity.getPassword());
-        lecturerDTO.setPhoneNumber(lecturerEntity.getPhoneNumber());
-        lecturerDTO.setAddress(AddressMapper.mapAddressEmbeddableToAddressDTO(lecturerEntity.getAddress(), addressDTO));
+
+        if (!simplify) {
+            lecturerDTO.setPhoneNumber(lecturerEntity.getPhoneNumber());
+            lecturerDTO.setPassword(lecturerEntity.getPassword());
+            lecturerDTO.setAddress(AddressMapper.mapAddressEmbeddableToAddressDTO(lecturerEntity.getAddress(), addressDTO));
+        }
         return lecturerDTO;
     }
 }
