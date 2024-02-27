@@ -154,13 +154,13 @@ public class DepartmentController {
 
     @Operation(
             summary = "Update Department REST API",
-            description = "Update department details in the attendX application"
+            description = "Update department details in the AttendX application"
     )
     @ApiResponses(
             {
                     @ApiResponse(
                             responseCode = "202",
-                            description = "HTTP Status CREATED",
+                            description = "HTTP Status Accepted",
                             content = @Content(
                                     schema = @Schema(implementation = ResponseDTO.class)
                             )

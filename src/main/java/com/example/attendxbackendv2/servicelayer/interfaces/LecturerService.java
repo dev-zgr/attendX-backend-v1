@@ -35,4 +35,14 @@ public interface LecturerService {
      * @throws ResourceNotFoundException if no such lecturer found with the specified email
      */
     LecturerDTO getLecturerByEmail(String email, boolean getDetails) throws ResourceNotFoundException;
+
+    /**
+     * This method updates the existing Lecturer by first fetching it from the DB and updates it to
+     * recent changes
+     * @param lecturerDTO with e-mail as id and updated fields
+     * @return true if update was successful
+     * @throws ResourceNotFoundException may be thrown due trying to access non-existing
+     * lecturer or trying to change the department of lecturer to non-existing department
+     */
+    boolean updateLecturer(LecturerDTO lecturerDTO) throws ResourceNotFoundException;
 }

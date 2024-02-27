@@ -58,6 +58,7 @@ public class LecturerServiceImpl implements LecturerService {
     }
 
     @Override
+    @Transactional
     public List<LecturerDTO> getAllLecturers(int pageNo, boolean ascending) {
         Pageable pageable;
         if (ascending) {
@@ -66,23 +67,57 @@ public class LecturerServiceImpl implements LecturerService {
             pageable = PageRequest.of(pageNo, pageSize, Sort.by("firstName").descending());
         }
         List<LecturerEntity> lecturerEntities = lecturerRepository.findAll(pageable).getContent();
-        return lecturerEntities.stream()
-                .map(lecturerEntity -> LecturerMapper
-                        .mapLecturerEntityToLecturerDTO(lecturerEntity,
-                                new LecturerDTO(),
-                                new AddressDTO(),
-                                false)).toList();
+        return lecturerEntities.stream().map(lecturerEntity -> LecturerMapper.mapLecturerEntityToLecturerDTO(lecturerEntity, new LecturerDTO(), new AddressDTO(), false)).toList();
     }
 
     @Override
+    @Transactional
     public LecturerDTO getLecturerByEmail(String email, boolean getDetails) throws ResourceNotFoundException {
-        LecturerEntity lecturer = lecturerRepository.findLecturerEntityByEmailIgnoreCase(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Lecturer", "email", email));
-        return LecturerMapper.mapLecturerEntityToLecturerDTO(lecturer,
-                new LecturerDTO(),
-                new AddressDTO(),
-                getDetails);
+        LecturerEntity lecturer = lecturerRepository.findLecturerEntityByEmailIgnoreCase(email).orElseThrow(() -> new ResourceNotFoundException("Lecturer", "email", email));
+        return LecturerMapper.mapLecturerEntityToLecturerDTO(lecturer, new LecturerDTO(), new AddressDTO(), getDetails);
 
 
+    }
+
+    @Override
+    @Transactional
+    public boolean updateLecturer(LecturerDTO lecturerDTO) throws ResourceNotFoundException {
+        boolean isUpdated = false;
+        lecturerRepository.findLecturerEntityByEmailIgnoreCase(lecturerDTO.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Lecturer",
+                        "email",
+                        lecturerDTO.getEmail()));
+
+        departmentRepository.findByDepartmentNameIgnoreCase(lecturerDTO.getDepartment())
+                .orElseThrow(() -> new ResourceNotFoundException("Department",
+                        "departmentName",
+                        lecturerDTO.getDepartment()));
+
+        // Find the lecturer
+        LecturerEntity lecturerToUpdate =
+                lecturerRepository.findLecturerEntityByEmailIgnoreCase(lecturerDTO.getEmail()).get();
+        // Get the old department entity
+        DepartmentEntity oldDepartmentEntity =
+                lecturerToUpdate.getRegisteredDepartment();
+
+        // Find the new department of the Lecturer
+        DepartmentEntity newDepartmentEntity =
+                departmentRepository.findByDepartmentNameIgnoreCase(lecturerDTO.getDepartment()).get();
+
+        // update other fields on Lecturer
+        LecturerMapper.mapLecturerDTOToLecturerEntity(lecturerToUpdate, lecturerDTO, new AddressEmbeddable());
+
+
+        // if the department has changed
+        if (oldDepartmentEntity.getDepartmentId() != newDepartmentEntity.getDepartmentId()) {
+            //Create relationship
+            lecturerToUpdate.setRegisteredDepartment(newDepartmentEntity);
+        }
+
+        lecturerRepository.save(lecturerToUpdate);
+
+        isUpdated = true;
+
+        return isUpdated;
     }
 }

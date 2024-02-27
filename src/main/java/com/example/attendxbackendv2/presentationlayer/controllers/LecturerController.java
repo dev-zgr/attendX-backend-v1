@@ -155,5 +155,63 @@ public class LecturerController {
                 .body(lecturerService.getLecturerByEmail(email, getDetails));
     }
 
+    @Operation(
+            summary = "Update the Lecturer with REST API",
+            description = "Update Lecturer Details in AttendX application"
+    )
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "202",
+                            description = "HTTP Status Accepted",
+                            content = @Content(
+                                    schema = @Schema(implementation = ResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "HTTP Status Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "HTTP Status Bad Request it may be causing due to invalid input or department not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    ), @ApiResponse(
+                    responseCode = "404",
+                    description = "HTTP Status Not Found it may be causing due trying to access " +
+                                   "non-existing lecturer or department",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    ),@ApiResponse(
+                    responseCode = "417",
+                    description = "HTTP Status Expectation failed  it may occurs due anomalies in AttendX system",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                                )
+                    )
+            }
+    )
+    @PutMapping(path = "/lecturer",
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ResponseDTO> updateLecturer(@Valid @RequestBody LecturerDTO lecturerDTO) {
+        boolean isUpdated = lecturerService.updateLecturer(lecturerDTO);
+        if (isUpdated) {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseDTO(LecturerContents.STATUS_200, LecturerContents.MESSAGE_200));
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.EXPECTATION_FAILED)
+                    .body(new ResponseDTO(LecturerContents.STATUS_417, LecturerContents.MESSAGE_417_UPDATE));
+        }
+    }
+
 
 }
