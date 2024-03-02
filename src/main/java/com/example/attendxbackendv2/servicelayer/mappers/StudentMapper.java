@@ -11,9 +11,7 @@ public class StudentMapper {
 
 
     public static StudentEntity mapStudentDTOToStudentEntity(StudentEntity studentEntity, StudentDTO studentDTO, AddressEmbeddable addressEmbeddable) {
-        StudentEntity student =  UserGenericMapper.mapUserDTOToUserEntity(studentEntity, studentDTO,addressEmbeddable);
-        student.setStudentId(studentDTO.getStudentNumber());
-        return student;
+        return   UserGenericMapper.mapUserDTOToUserEntity(studentEntity, studentDTO,addressEmbeddable);
     }
 
     public static StudentDTO mapStudentEntityToStudentDTO(StudentEntity studentEntity, StudentDTO studentDTO, AddressDTO addressDTO, boolean getDetails){

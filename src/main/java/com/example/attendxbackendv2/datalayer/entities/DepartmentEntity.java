@@ -51,15 +51,21 @@ public class DepartmentEntity{
     @JsonManagedReference
     private List<LecturerEntity> registeredLecturers;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<CourseEntity> courses;
+
     public DepartmentEntity(String departmentName, String description){
         this.departmentName = departmentName;
         this.description = description;
         this.registeredLecturers = new ArrayList<>();
+        this.courses = new ArrayList<>();
     }
 
     public DepartmentEntity(){
         this.departmentName = this.description = null;
         this.registeredLecturers = new ArrayList<>();
+        this.courses = new ArrayList<>();
     }
 
     public void addLecturer(LecturerEntity lecturerEntity){
@@ -68,5 +74,13 @@ public class DepartmentEntity{
 
     public void removeLecturer(LecturerEntity lecturerEntity){
         registeredLecturers.removeIf(lecturer -> lecturer.getEmail().equals(lecturerEntity.getEmail()));
+    }
+
+    public void addCourse(CourseEntity courseEntity){
+        this.courses.add(courseEntity);
+    }
+
+    public void removeCourse(CourseEntity courseEntity){
+        courses.removeIf(course -> course.getCourseCode().equals(courseEntity.getCourseCode()));
     }
 }
