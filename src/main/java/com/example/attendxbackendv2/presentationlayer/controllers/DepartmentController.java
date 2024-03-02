@@ -221,6 +221,7 @@ public class DepartmentController {
             }
     )
     @DeleteMapping(path = "/department",
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO> deleteDepartment(@RequestParam(name = "department_name", defaultValue = "null") @Size(min = 8, max = 60) String departmentName) {
         boolean isDeleted = departmentService.deleteDepartment(departmentName);

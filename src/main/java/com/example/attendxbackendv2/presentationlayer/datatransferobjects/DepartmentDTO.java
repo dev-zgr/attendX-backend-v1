@@ -1,6 +1,5 @@
 package com.example.attendxbackendv2.presentationlayer.datatransferobjects;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -32,7 +31,6 @@ public class DepartmentDTO {
     )
     private String description;
 
-    @JsonManagedReference
     private List<LecturerDTO> lecturers;
 }
 

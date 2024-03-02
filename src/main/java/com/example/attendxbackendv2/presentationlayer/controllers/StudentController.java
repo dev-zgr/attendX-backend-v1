@@ -1,11 +1,10 @@
 package com.example.attendxbackendv2.presentationlayer.controllers;
 
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.DepartmentDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ErrorResponseDTO;
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.LecturerDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ResponseDTO;
-import com.example.attendxbackendv2.servicelayer.contants.LecturerContents;
-import com.example.attendxbackendv2.servicelayer.interfaces.LecturerService;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.StudentDTO;
+import com.example.attendxbackendv2.servicelayer.contants.StudentConstants;
+import com.example.attendxbackendv2.servicelayer.interfaces.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,21 +22,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(
-        name = "Lecturer",
-        description = "Lecturer API endpoints")
+        name = "Student",
+        description = "Student API endpoints")
 @RestController
 @RequestMapping(value = "/api/v1", produces = "application/json")
 @Validated
-public class LecturerController {
+public class StudentController {
 
-    private final LecturerService lecturerService;
+    private final StudentService studentService;
 
 
     @Autowired
-    public LecturerController(LecturerService lecturerService) {
-        this.lecturerService = lecturerService;
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
     }
-
 
     @Operation(
             summary = "Creates a Lecturer Entity with REST APIs",
@@ -66,18 +64,18 @@ public class LecturerController {
                     )
             )
     })
-    @PostMapping(path = "/lecturer", consumes = "application/json")
-    public ResponseEntity<ResponseDTO> createLecturer(@Valid @RequestBody LecturerDTO lecturerDTO) {
-        lecturerService.createLecturer(lecturerDTO);
+    @PostMapping(path = "/student", consumes = "application/json")
+    public ResponseEntity<ResponseDTO> createStudent(@Valid @RequestBody StudentDTO studentDTO) {
+        studentService.createStudent(studentDTO);
         return ResponseEntity.status(201).body(new ResponseDTO(
                 Integer.toString(HttpStatus.CREATED.value()),
-                LecturerContents.MESSAGE_201));
-
+                StudentConstants.MESSAGE_201));
     }
 
+
     @Operation(
-            summary = "Fetch All Departments REST API",
-            description = "Fetch all department details from the attendX application" +
+            summary = "Fetch All Students REST API",
+            description = "Fetch all student details from the attendX application" +
                     "This will be mainly used to show all the departments in the UI"
     )
     @ApiResponses(
@@ -86,7 +84,7 @@ public class LecturerController {
                             responseCode = "200",
                             description = "HTTP Status OK",
                             content = @Content(
-                                    schema = @Schema(implementation = LecturerDTO.class)
+                                    schema = @Schema(implementation = StudentDTO.class)
                             )
                     ), @ApiResponse(
                     responseCode = "500",
@@ -98,23 +96,21 @@ public class LecturerController {
 
             }
     )
-    @GetMapping(path = "/lecturer", consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<List<LecturerDTO>> getAllDepartments(
+    @GetMapping(path = "/student", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<List<StudentDTO>> getAllStudents(
             @RequestParam(value = "page-no", defaultValue = "0") int pageNo,
             @RequestParam(value = "ascending", defaultValue = "true") boolean ascending) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(lecturerService.getAllLecturers(pageNo, ascending));
+                .body(studentService.getAllStudents(pageNo, ascending));
     }
 
-
     @Operation(
-            summary = "Fetch Lecturer by email REST API",
-            description = "Fetch lecturer details by ID from the attendX application" +
-                    "This will be mainly used to show all the lecturer details in the UI" +
-                    "This section fetches the email, first and last name, password, phone" +
-                    " number, department, and address of the lecturer"
+            summary = "Fetch Student by email REST API",
+            description = "Fetch student details by email from the attendX application. " +
+                    "This will be mainly used to show all the student details in the UI. " +
+                    "This section fetches the email, first and last name, password, phone " +
+                    "number, and address of the student."
     )
     @ApiResponses(
             {
@@ -122,7 +118,7 @@ public class LecturerController {
                             responseCode = "200",
                             description = "HTTP Status OK",
                             content = @Content(
-                                    schema = @Schema(implementation = DepartmentDTO.class)
+                                    schema = @Schema(implementation = StudentDTO.class)
                             )
                     ),
                     @ApiResponse(
@@ -134,30 +130,29 @@ public class LecturerController {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "HTTP Status Bad Request it may be causing due to invalid input or department not found",
+                            description = "HTTP Status Bad Request it may be causing due to invalid input",
                             content = @Content(
                                     schema = @Schema(implementation = ErrorResponseDTO.class)
                             )
                     ),
                     @ApiResponse(
                             responseCode = "404",
-                            description = "HTTP Status Not Found it may be causing due trying to access non-existing lecturer",
+                            description = "HTTP Status Not Found it may be causing due to trying to access non-existing student",
                             content = @Content(
                                     schema = @Schema(implementation = ErrorResponseDTO.class)
                             )
                     )
             })
-    @GetMapping(path = "/lecturer/{email}", consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<LecturerDTO> getLecturerByEmail(@PathVariable String email, @RequestParam(value = "get-details", defaultValue = "true") boolean getDetails) {
+    @GetMapping(path = "/student/{email}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<StudentDTO> getStudentByEmail(@PathVariable String email, @RequestParam(value = "get-details", defaultValue = "true") boolean getDetails) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(lecturerService.getLecturerByEmail(email, getDetails));
+                .body(studentService.getStudentByEmail(email, getDetails));
     }
 
     @Operation(
-            summary = "Update the Lecturer with REST API",
-            description = "Update Lecturer Details in AttendX application"
+            summary = "Update the Student with REST API",
+            description = "Update Student Details in AttendX application"
     )
     @ApiResponses(
             {
@@ -184,38 +179,37 @@ public class LecturerController {
                     ), @ApiResponse(
                     responseCode = "404",
                     description = "HTTP Status Not Found it may be causing due trying to access " +
-                                   "non-existing lecturer or department",
+                            "non-existing student or department",
                     content = @Content(
                             schema = @Schema(implementation = ErrorResponseDTO.class)
-                            )
-                    ),@ApiResponse(
-                    responseCode = "417",
-                    description = "HTTP Status Expectation failed  it may occurs due anomalies in AttendX system",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDTO.class)
-                                )
                     )
-            }
-    )
-    @PutMapping(path = "/lecturer",
+            ),@ApiResponse(
+                    responseCode = "417",
+                    description = "HTTP Status Expectation failed  it may occur due to anomalies in AttendX system",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
+            })
+    @PutMapping(path = "/student",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<ResponseDTO> updateLecturer(@Valid @RequestBody LecturerDTO lecturerDTO) {
-        boolean isUpdated = lecturerService.updateLecturer(lecturerDTO);
+    public ResponseEntity<ResponseDTO> updateStudent(@Valid @RequestBody StudentDTO studentDTO) {
+        boolean isUpdated = studentService.updateStudent(studentDTO);
         if (isUpdated) {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(new ResponseDTO(LecturerContents.STATUS_200, LecturerContents.MESSAGE_200));
+                    .body(new ResponseDTO(StudentConstants.STATUS_200, StudentConstants.MESSAGE_200));
         } else {
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDTO(LecturerContents.STATUS_417, LecturerContents.MESSAGE_417_UPDATE));
+                    .body(new ResponseDTO(StudentConstants.STATUS_417, StudentConstants.MESSAGE_417_UPDATE));
         }
     }
 
     @Operation(
-            summary = "Delete Lecturer REST API",
-            description = "Delete Lecturer from the AttendX application"
+            summary = "Delete Student REST API",
+            description = "Delete Student from the AttendX application"
     )
     @ApiResponses(
             {
@@ -242,20 +236,22 @@ public class LecturerController {
                     )
             }
     )
-    @DeleteMapping(path = "/lecturer/{email}",
+    @DeleteMapping(path = "/student/{email}",
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<ResponseDTO> deleteLecturer(@PathVariable  String email) {
-        boolean isDeleted = lecturerService.deleteLecturer(email);
+    public ResponseEntity<ResponseDTO> deleteStudent(@PathVariable String email) {
+        boolean isDeleted = studentService.deleteStudent(email);
         if (isDeleted) {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(new ResponseDTO(LecturerContents.STATUS_200, LecturerContents.MESSAGE_200));
+                    .body(new ResponseDTO(StudentConstants.STATUS_200, StudentConstants.MESSAGE_200));
         } else {
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDTO(LecturerContents.STATUS_417, LecturerContents.MESSAGE_417_UPDATE));
+                    .body(new ResponseDTO(StudentConstants.STATUS_417, StudentConstants.MESSAGE_417_UPDATE));
         }
     }
+
+
 
 
 }

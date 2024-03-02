@@ -67,12 +67,6 @@ public class DepartmentEntity{
     }
 
     public void removeLecturer(LecturerEntity lecturerEntity){
-        Iterator<LecturerEntity> iterator = registeredLecturers.iterator();
-        while (iterator.hasNext()) {
-            LecturerEntity lecturer = iterator.next();
-            if (lecturer.getEmail().equals(lecturerEntity.getEmail())) {
-                iterator.remove();
-            }
-        }
+        registeredLecturers.removeIf(lecturer -> lecturer.getEmail().equals(lecturerEntity.getEmail()));
     }
 }

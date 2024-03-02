@@ -1,9 +1,7 @@
 package com.example.attendxbackendv2.presentationlayer.exceptionHandler;
 
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ErrorResponseDTO;
-import com.example.attendxbackendv2.servicelayer.exceptions.DepartmentAlreadyExistsException;
-import com.example.attendxbackendv2.servicelayer.exceptions.LecturerAlreadyExistException;
-import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
+import com.example.attendxbackendv2.servicelayer.exceptions.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -88,5 +86,29 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
     }
 
+
+    @ExceptionHandler(StudentAlreadyExistException.class)
+    public ResponseEntity<ErrorResponseDTO> handleStudentAlreadyExistsException(StudentAlreadyExistException exception,
+                                                                                 WebRequest webRequest){
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
+                webRequest.getDescription(false),
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EditorAlreadyExistException.class)
+    public ResponseEntity<ErrorResponseDTO> handleEditorAlreadyExistsException(EditorAlreadyExistException exception,
+                                                                                WebRequest webRequest){
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
+                webRequest.getDescription(false),
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
 }
 

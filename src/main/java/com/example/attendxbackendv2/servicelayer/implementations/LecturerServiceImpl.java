@@ -76,8 +76,6 @@ public class LecturerServiceImpl implements LecturerService {
     public LecturerDTO getLecturerByEmail(String email, boolean getDetails) throws ResourceNotFoundException {
         LecturerEntity lecturer = lecturerRepository.findLecturerEntityByEmailIgnoreCase(email).orElseThrow(() -> new ResourceNotFoundException("Lecturer", "email", email));
         return LecturerMapper.mapLecturerEntityToLecturerDTO(lecturer, new LecturerDTO(), new AddressDTO(), getDetails);
-
-
     }
 
     @Override

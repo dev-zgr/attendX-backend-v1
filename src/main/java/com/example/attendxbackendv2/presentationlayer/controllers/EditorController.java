@@ -1,11 +1,10 @@
 package com.example.attendxbackendv2.presentationlayer.controllers;
 
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.DepartmentDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.EditorDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ErrorResponseDTO;
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.LecturerDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ResponseDTO;
-import com.example.attendxbackendv2.servicelayer.contants.LecturerContents;
-import com.example.attendxbackendv2.servicelayer.interfaces.LecturerService;
+import com.example.attendxbackendv2.servicelayer.contants.EditorConstants;
+import com.example.attendxbackendv2.servicelayer.interfaces.EditorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,25 +22,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(
-        name = "Lecturer",
-        description = "Lecturer API endpoints")
+        name = "Editor",
+        description = "Editor API endpoints")
 @RestController
 @RequestMapping(value = "/api/v1", produces = "application/json")
 @Validated
-public class LecturerController {
+public class EditorController {
 
-    private final LecturerService lecturerService;
-
+    private final EditorService editorService;
 
     @Autowired
-    public LecturerController(LecturerService lecturerService) {
-        this.lecturerService = lecturerService;
+    public EditorController(EditorService editorService) {
+        this.editorService = editorService;
     }
 
-
     @Operation(
-            summary = "Creates a Lecturer Entity with REST APIs",
-            description = "Create a new lecturer in the AttendX application "
+            summary = "Creates an Editor Entity with REST APIs",
+            description = "Create a new editor in the AttendX application "
     )
     @ApiResponses({
             @ApiResponse(
@@ -66,19 +63,17 @@ public class LecturerController {
                     )
             )
     })
-    @PostMapping(path = "/lecturer", consumes = "application/json")
-    public ResponseEntity<ResponseDTO> createLecturer(@Valid @RequestBody LecturerDTO lecturerDTO) {
-        lecturerService.createLecturer(lecturerDTO);
+    @PostMapping(path = "/editor", consumes = "application/json")
+    public ResponseEntity<ResponseDTO> createEditor(@Valid @RequestBody EditorDTO editorDTO) {
+        editorService.createEditor(editorDTO);
         return ResponseEntity.status(201).body(new ResponseDTO(
                 Integer.toString(HttpStatus.CREATED.value()),
-                LecturerContents.MESSAGE_201));
-
+                EditorConstants.MESSAGE_201));
     }
 
     @Operation(
-            summary = "Fetch All Departments REST API",
-            description = "Fetch all department details from the attendX application" +
-                    "This will be mainly used to show all the departments in the UI"
+            summary = "Fetch All Editors REST API",
+            description = "Fetch all editor details from the attendX application"
     )
     @ApiResponses(
             {
@@ -86,35 +81,31 @@ public class LecturerController {
                             responseCode = "200",
                             description = "HTTP Status OK",
                             content = @Content(
-                                    schema = @Schema(implementation = LecturerDTO.class)
+                                    schema = @Schema(implementation = EditorDTO.class)
                             )
                     ), @ApiResponse(
                     responseCode = "500",
                     description = "HTTP Status Internal Server Error",
                     content = @Content(
                             schema = @Schema(implementation = ErrorResponseDTO.class)
-                    )
-            )
-
+                    ))
             }
+
     )
-    @GetMapping(path = "/lecturer", consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<List<LecturerDTO>> getAllDepartments(
-            @RequestParam(value = "page-no", defaultValue = "0") int pageNo,
-            @RequestParam(value = "ascending", defaultValue = "true") boolean ascending) {
+    @GetMapping(path = "/editor", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<List<EditorDTO>> getAllEditors(
+            @RequestParam(value = "page-no", defaultValue = "0")
+            int pageNo,
+            @RequestParam(value = "ascending", defaultValue = "true")
+            boolean ascending) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(lecturerService.getAllLecturers(pageNo, ascending));
+                .body(editorService.getAllEditors(pageNo, ascending));
     }
 
-
     @Operation(
-            summary = "Fetch Lecturer by email REST API",
-            description = "Fetch lecturer details by ID from the attendX application" +
-                    "This will be mainly used to show all the lecturer details in the UI" +
-                    "This section fetches the email, first and last name, password, phone" +
-                    " number, department, and address of the lecturer"
+            summary = "Fetch Editor by email REST API",
+            description = "Fetch editor details by email from the attendX application."
     )
     @ApiResponses(
             {
@@ -122,7 +113,7 @@ public class LecturerController {
                             responseCode = "200",
                             description = "HTTP Status OK",
                             content = @Content(
-                                    schema = @Schema(implementation = DepartmentDTO.class)
+                                    schema = @Schema(implementation = EditorDTO.class)
                             )
                     ),
                     @ApiResponse(
@@ -134,30 +125,29 @@ public class LecturerController {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "HTTP Status Bad Request it may be causing due to invalid input or department not found",
+                            description = "HTTP Status Bad Request it may be causing due to invalid input",
                             content = @Content(
                                     schema = @Schema(implementation = ErrorResponseDTO.class)
                             )
                     ),
                     @ApiResponse(
                             responseCode = "404",
-                            description = "HTTP Status Not Found it may be causing due trying to access non-existing lecturer",
+                            description = "HTTP Status Not Found it may be causing due to trying to access non-existing editor",
                             content = @Content(
                                     schema = @Schema(implementation = ErrorResponseDTO.class)
                             )
                     )
             })
-    @GetMapping(path = "/lecturer/{email}", consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<LecturerDTO> getLecturerByEmail(@PathVariable String email, @RequestParam(value = "get-details", defaultValue = "true") boolean getDetails) {
+    @GetMapping(path = "/editor/{email}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<EditorDTO> getEditorByEmail(@PathVariable String email,@RequestParam(value = "get-details", defaultValue = "true") boolean getDetails) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(lecturerService.getLecturerByEmail(email, getDetails));
+                .body(editorService.getEditorByEmail(email, getDetails));
     }
 
     @Operation(
-            summary = "Update the Lecturer with REST API",
-            description = "Update Lecturer Details in AttendX application"
+            summary = "Update the Editor with REST API",
+            description = "Update Editor Details in AttendX application"
     )
     @ApiResponses(
             {
@@ -184,38 +174,37 @@ public class LecturerController {
                     ), @ApiResponse(
                     responseCode = "404",
                     description = "HTTP Status Not Found it may be causing due trying to access " +
-                                   "non-existing lecturer or department",
+                            "non-existing editor or department",
                     content = @Content(
                             schema = @Schema(implementation = ErrorResponseDTO.class)
-                            )
-                    ),@ApiResponse(
-                    responseCode = "417",
-                    description = "HTTP Status Expectation failed  it may occurs due anomalies in AttendX system",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDTO.class)
-                                )
                     )
-            }
-    )
-    @PutMapping(path = "/lecturer",
+            ), @ApiResponse(
+                    responseCode = "417",
+                    description = "HTTP Status Expectation failed  it may occur due to anomalies in AttendX system",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
+            })
+    @PutMapping(path = "/editor",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<ResponseDTO> updateLecturer(@Valid @RequestBody LecturerDTO lecturerDTO) {
-        boolean isUpdated = lecturerService.updateLecturer(lecturerDTO);
+    public ResponseEntity<ResponseDTO> updateEditor(@Valid @RequestBody EditorDTO editorDTO) {
+        boolean isUpdated = editorService.updateEditor(editorDTO);
         if (isUpdated) {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(new ResponseDTO(LecturerContents.STATUS_200, LecturerContents.MESSAGE_200));
+                    .body(new ResponseDTO(EditorConstants.STATUS_200, EditorConstants.MESSAGE_200));
         } else {
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDTO(LecturerContents.STATUS_417, LecturerContents.MESSAGE_417_UPDATE));
+                    .body(new ResponseDTO(EditorConstants.STATUS_417, EditorConstants.MESSAGE_417_UPDATE));
         }
     }
 
     @Operation(
-            summary = "Delete Lecturer REST API",
-            description = "Delete Lecturer from the AttendX application"
+            summary = "Delete Editor REST API",
+            description = "Delete Editor from the AttendX application"
     )
     @ApiResponses(
             {
@@ -242,20 +231,18 @@ public class LecturerController {
                     )
             }
     )
-    @DeleteMapping(path = "/lecturer/{email}",
+    @DeleteMapping(path = "/editor/{email}",
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<ResponseDTO> deleteLecturer(@PathVariable  String email) {
-        boolean isDeleted = lecturerService.deleteLecturer(email);
+    public ResponseEntity<ResponseDTO> deleteEditor(@PathVariable String email) {
+        boolean isDeleted = editorService.deleteEditor(email);
         if (isDeleted) {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(new ResponseDTO(LecturerContents.STATUS_200, LecturerContents.MESSAGE_200));
+                    .body(new ResponseDTO(EditorConstants.STATUS_200, EditorConstants.MESSAGE_200));
         } else {
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDTO(LecturerContents.STATUS_417, LecturerContents.MESSAGE_417_UPDATE));
+                    .body(new ResponseDTO(EditorConstants.STATUS_417, EditorConstants.MESSAGE_417_UPDATE));
         }
     }
-
-
 }
