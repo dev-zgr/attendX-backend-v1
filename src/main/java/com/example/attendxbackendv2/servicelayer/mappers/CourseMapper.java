@@ -4,10 +4,6 @@ import com.example.attendxbackendv2.datalayer.entities.CourseEntity;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.CourseDTO;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class CourseMapper {

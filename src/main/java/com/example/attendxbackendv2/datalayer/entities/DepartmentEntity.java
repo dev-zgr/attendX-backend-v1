@@ -3,10 +3,10 @@ package com.example.attendxbackendv2.datalayer.entities;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.Data;
+import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 

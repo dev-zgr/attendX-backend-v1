@@ -1,10 +1,8 @@
 package com.example.attendxbackendv2.servicelayer.mappers;
 
 import com.example.attendxbackendv2.datalayer.entities.AddressEmbeddable;
-import com.example.attendxbackendv2.datalayer.entities.LecturerEntity;
 import com.example.attendxbackendv2.datalayer.entities.StudentEntity;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.AddressDTO;
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.LecturerDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.StudentDTO;
 
 public class StudentMapper {
