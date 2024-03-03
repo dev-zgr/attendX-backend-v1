@@ -1,8 +1,6 @@
 package com.example.attendxbackendv2.servicelayer.interfaces;
 
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.LecturerDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.StudentDTO;
-import com.example.attendxbackendv2.servicelayer.exceptions.LecturerAlreadyExistException;
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
 import com.example.attendxbackendv2.servicelayer.exceptions.StudentAlreadyExistException;
 
@@ -19,7 +17,7 @@ public interface StudentService {
     void createStudent(StudentDTO studentDTO) throws StudentAlreadyExistException, ResourceNotFoundException;
 
     /**
-     * Get all the Students for UI presentation it doesn't fetches the details of the lecturer
+     * Get all the Students for UI presentation it doesn't fetches the details of the students
      * It uses pagination and sorting by instructors first name.
      * @param pageNo page number of the result. See application.properties for the page size
      * @param ascending sorting order

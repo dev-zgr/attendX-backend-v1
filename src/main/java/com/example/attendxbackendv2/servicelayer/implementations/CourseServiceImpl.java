@@ -11,9 +11,15 @@ import com.example.attendxbackendv2.servicelayer.exceptions.CourseAlreadyExistsE
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
 import com.example.attendxbackendv2.servicelayer.interfaces.CourseService;
 import com.example.attendxbackendv2.servicelayer.mappers.CourseMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -34,6 +40,7 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
+    @Transactional
     public void createCourse(CourseDTO courseDTO) throws ResourceNotFoundException, CourseAlreadyExistsException {
         LecturerEntity lecturer= lecturerRepository.findLecturerEntityByEmailIgnoreCase(courseDTO.getLecturerEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Lecturer", "email", courseDTO.getLecturerEmail()));
@@ -47,5 +54,19 @@ public class CourseServiceImpl implements CourseService {
         courseRepository.save(courseEntity);
         lecturerRepository.save(lecturer);
         departmentRepository.save(department);
+    }
+
+    @Override
+    @Transactional
+    public List<CourseDTO> getAllCourses(int pageNo, boolean ascending) {
+        Pageable pageable;
+        if (ascending) {
+            pageable = PageRequest.of(pageNo, pageSize, Sort.by("courseCode").ascending());
+        } else {
+            pageable = PageRequest.of(pageNo, pageSize, Sort.by("courseCode").descending());
+        }
+        List<CourseEntity> courseEntities = courseRepository.findAll(pageable).getContent();
+        return courseEntities.stream().map(courseEntity -> CourseMapper.mapToCourseDTO(new CourseDTO(), courseEntity, false)).toList();
+
     }
 }

@@ -4,6 +4,8 @@ import com.example.attendxbackendv2.presentationlayer.datatransferobjects.Course
 import com.example.attendxbackendv2.servicelayer.exceptions.CourseAlreadyExistsException;
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
 
+import java.util.List;
+
 public interface CourseService {
 
     /**
@@ -13,5 +15,15 @@ public interface CourseService {
      * @param courseDTO  course DTO to be Create
      */
     void createCourse(CourseDTO courseDTO) throws ResourceNotFoundException, CourseAlreadyExistsException;
+
+    /**
+     * Get all the Courses for UI presentation it doesn't fetches the details of the Courses
+     * It uses pagination and sorting by Course code.
+     * @param pageNo page number of the result. See application.properties for the page size
+     * @param ascending sorting order
+     * @return the list of the CourseDTO requested
+     */
+    List<CourseDTO> getAllCourses(int pageNo, boolean ascending);
+
 }
 
