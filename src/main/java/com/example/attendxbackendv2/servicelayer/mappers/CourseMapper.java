@@ -23,7 +23,7 @@ public class CourseMapper {
         return courseEntity;
     }
 
-    public static CourseDTO mapToCourseDTO(CourseDTO courseDTO, CourseEntity courseEntity, boolean getDetails) {
+    public static CourseDTO mapToCourseDTO(CourseEntity courseEntity, CourseDTO courseDTO,  boolean getDetails) {
         courseDTO.setCourseCode(courseEntity.getCourseCode());
         courseDTO.setCourseName(courseEntity.getCourseName());
         courseDTO.setDepartmentName(courseEntity.getDepartment().getDepartmentName());

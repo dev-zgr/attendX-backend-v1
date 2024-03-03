@@ -105,4 +105,50 @@ public class CourseController {
                 .body(courseService.getAllCourses(pageNo, ascending));
     }
 
+
+    @Operation(
+            summary = "Fetch Course by course code REST API",
+            description = "Course student details by email from the attendX application. " +
+                    "This will be mainly used to show all the course details in the UI. " +
+                    "This section fetches the course code, course name, course description course lecturer's email" +
+                    "course start date, course end date, and department name of the course."
+    )
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "HTTP Status OK",
+                            content = @Content(
+                                    schema = @Schema(implementation = StudentDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "HTTP Status Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "HTTP Status Bad Request it may be causing due to invalid input",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "HTTP Status Not Found it may be causing due to trying to access non-existing course",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    )
+            })
+    @GetMapping(path = "/course/{courseCode}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<CourseDTO> getStudentByEmail(@PathVariable String courseCode, @RequestParam(value = "get-details", defaultValue = "true") boolean getDetails) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(courseService.getCourseByCourseCode(courseCode, getDetails));
+    }
+
 }

@@ -25,5 +25,15 @@ public interface CourseService {
      */
     List<CourseDTO> getAllCourses(int pageNo, boolean ascending);
 
+    /**
+     * Fetch course details by course code .
+     * @param courseCode the course code of the requested course
+     * @param getDetails the fetch details. If true, fetches the course details. If false, fetches only the course code,
+     *                  course name and department name of the course.Fewer data increases resilience for the application
+     *                   when presenting the data
+     * @return the requested CourseDTO if found
+     * @throws ResourceNotFoundException if no such course found with the specified code
+     */
+    CourseDTO getCourseByCourseCode(String courseCode, boolean getDetails) throws ResourceNotFoundException;
 }
 

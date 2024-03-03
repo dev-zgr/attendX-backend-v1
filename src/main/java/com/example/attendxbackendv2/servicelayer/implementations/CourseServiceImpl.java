@@ -66,7 +66,15 @@ public class CourseServiceImpl implements CourseService {
             pageable = PageRequest.of(pageNo, pageSize, Sort.by("courseCode").descending());
         }
         List<CourseEntity> courseEntities = courseRepository.findAll(pageable).getContent();
-        return courseEntities.stream().map(courseEntity -> CourseMapper.mapToCourseDTO(new CourseDTO(), courseEntity, false)).toList();
+        return courseEntities.stream().map(courseEntity -> CourseMapper.mapToCourseDTO( courseEntity, new CourseDTO(),false)).toList();
 
+    }
+
+    @Override
+    @Transactional
+    public CourseDTO getCourseByCourseCode(String courseCode, boolean getDetails) throws ResourceNotFoundException {
+        CourseEntity course = courseRepository.findCourseEntityByCourseCodeIgnoreCase(courseCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Course", "courseCode", courseCode));
+        return CourseMapper.mapToCourseDTO(course, new CourseDTO(), getDetails);
     }
 }
