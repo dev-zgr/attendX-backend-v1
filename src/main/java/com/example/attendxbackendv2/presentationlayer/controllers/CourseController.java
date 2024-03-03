@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -64,7 +65,7 @@ public class CourseController {
             )
     })
     @PostMapping(path = "/course", consumes = "application/json")
-    public ResponseEntity<ResponseDTO> createCourse( @RequestBody CourseDTO courseDTO) {
+    public ResponseEntity<ResponseDTO> createCourse(@RequestBody CourseDTO courseDTO) {
         courseService.createCourse(courseDTO);
         return ResponseEntity.status(201).body(new ResponseDTO(
                 CourseConstants.STATUS_201,
@@ -149,6 +150,58 @@ public class CourseController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(courseService.getCourseByCourseCode(courseCode, getDetails));
+    }
+
+
+    @Operation(
+            summary = "Update Course REST API",
+            description = "Update the existing Course in the AttendX application"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK",
+                    content = @Content(
+                            schema = @Schema(implementation = ResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "HTTP Status Bad Request it may be causing due to invalid input",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "HTTP Status Not Found it may be causing due to trying to access non-existing course",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
+    })
+    @PutMapping(path = "/course",
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE}
+    )
+    public ResponseEntity<ResponseDTO> updateCourse(@Valid @RequestBody CourseDTO courseDTO) {
+        boolean isCourseUpdated = courseService.updateCourse(courseDTO);
+        if (isCourseUpdated) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO(
+                    CourseConstants.STATUS_200, CourseConstants.MESSAGE_200));
+        } else {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+                    new ResponseDTO(
+                            CourseConstants.STATUS_417, CourseConstants.MESSAGE_417_UPDATE)
+            );
+        }
     }
 
 }

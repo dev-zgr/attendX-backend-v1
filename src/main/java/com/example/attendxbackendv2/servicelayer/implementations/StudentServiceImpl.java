@@ -4,7 +4,6 @@ import com.example.attendxbackendv2.datalayer.entities.AddressEmbeddable;
 import com.example.attendxbackendv2.datalayer.entities.StudentEntity;
 import com.example.attendxbackendv2.datalayer.repositories.StudentRepository;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.AddressDTO;
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.LecturerDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.StudentDTO;
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
 import com.example.attendxbackendv2.servicelayer.exceptions.StudentAlreadyExistException;
@@ -65,18 +64,11 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public boolean updateStudent(StudentDTO studentDTO) throws ResourceNotFoundException {
         boolean isUpdated = false;
-        studentRepository.findStudentEntityByEmailIgnoreCase(studentDTO.getEmail())
+        StudentEntity studentToUpdate = studentRepository.findStudentEntityByEmailIgnoreCase(studentDTO.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Student",
                         "email",
                         studentDTO.getEmail()));
-
-        // Find the student
-        StudentEntity studentToUpdate =
-                studentRepository.findStudentEntityByEmailIgnoreCase(studentDTO.getEmail()).get();
-
-        // Update other fields on Student
         StudentMapper.mapStudentDTOToStudentEntity(studentToUpdate, studentDTO, new AddressEmbeddable());
-
         studentRepository.save(studentToUpdate);
         isUpdated = true;
         return isUpdated;

@@ -35,5 +35,15 @@ public interface CourseService {
      * @throws ResourceNotFoundException if no such course found with the specified code
      */
     CourseDTO getCourseByCourseCode(String courseCode, boolean getDetails) throws ResourceNotFoundException;
+
+    /**
+     * Updates the existing Course by fetching it from the database and applying recent changes.
+     *
+     * @param courseDTO The DTO containing the Course's code as an identifier and updated fields.
+     * @return True if the update was successful.
+     * @throws ResourceNotFoundException May be thrown if attempting to access a non-existing student
+     *                                   or trying to change the department of the student to a non-existing department.
+     */
+    boolean updateCourse(CourseDTO courseDTO);
 }
 

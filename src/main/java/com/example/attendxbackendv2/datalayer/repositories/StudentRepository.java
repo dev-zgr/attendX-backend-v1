@@ -10,5 +10,6 @@ import java.util.Optional;
 @Repository
 public interface StudentRepository extends JpaRepository<StudentEntity, Long>, PagingAndSortingRepository<StudentEntity,Long> {
     Optional<StudentEntity> findStudentEntityByEmailIgnoreCase(String email);
+    Optional<StudentEntity> findStudentEntityByStudentId(String studentId);
 
 }
