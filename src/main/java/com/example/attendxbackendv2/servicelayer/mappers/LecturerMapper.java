@@ -1,6 +1,7 @@
 package com.example.attendxbackendv2.servicelayer.mappers;
 
 
+import com.example.attendxbackendv2.config.UserConfigConstants;
 import com.example.attendxbackendv2.datalayer.entities.AddressEmbeddable;
 import com.example.attendxbackendv2.datalayer.entities.LecturerEntity;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.AddressDTO;
@@ -25,6 +26,7 @@ public class LecturerMapper {
         lecturerDTO.setLastName(lecturerEntity.getLastName());
         lecturerDTO.setDepartment(lecturerEntity.getRegisteredDepartment().getDepartmentName());
         lecturerDTO.setEmail(lecturerEntity.getEmail());
+        lecturerDTO.setRole(UserConfigConstants.LECTURER_ROLE_VALUE);
 
         if (getDetails) {
             lecturerDTO.setPhoneNumber(lecturerEntity.getPhoneNumber());

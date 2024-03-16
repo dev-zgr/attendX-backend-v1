@@ -57,4 +57,10 @@ public class UserBaseDTO {
     )
     @Valid
     private AddressDTO address;
+
+    @Schema(
+            description = "Stores the role of the user",
+            example =  "LECTURER"
+    )
+    private String role;
 }

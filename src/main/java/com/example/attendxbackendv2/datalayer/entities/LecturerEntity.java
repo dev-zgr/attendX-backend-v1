@@ -1,9 +1,6 @@
 package com.example.attendxbackendv2.datalayer.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -14,6 +11,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @ToString
 @Entity
+@DiscriminatorValue("LECTURER")
 @Data
 public class LecturerEntity extends UserBaseEntity{
 

@@ -1,6 +1,7 @@
 package com.example.attendxbackendv2.datalayer.entities;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,6 +9,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 @ToString
 @Entity
+@DiscriminatorValue("EDITOR")
 @Data
 public class EditorEntity extends UserBaseEntity {
 

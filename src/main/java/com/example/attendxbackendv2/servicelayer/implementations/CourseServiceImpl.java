@@ -1,13 +1,7 @@
 package com.example.attendxbackendv2.servicelayer.implementations;
 
-import com.example.attendxbackendv2.datalayer.entities.CourseEntity;
-import com.example.attendxbackendv2.datalayer.entities.DepartmentEntity;
-import com.example.attendxbackendv2.datalayer.entities.LecturerEntity;
-import com.example.attendxbackendv2.datalayer.entities.StudentEntity;
-import com.example.attendxbackendv2.datalayer.repositories.CourseRepository;
-import com.example.attendxbackendv2.datalayer.repositories.DepartmentRepository;
-import com.example.attendxbackendv2.datalayer.repositories.LecturerRepository;
-import com.example.attendxbackendv2.datalayer.repositories.StudentRepository;
+import com.example.attendxbackendv2.datalayer.entities.*;
+import com.example.attendxbackendv2.datalayer.repositories.*;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.CourseDTO;
 import com.example.attendxbackendv2.servicelayer.exceptions.CourseAlreadyExistsException;
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
@@ -21,10 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -35,13 +27,15 @@ public class CourseServiceImpl implements CourseService {
     private final DepartmentRepository departmentRepository;
     private final CourseRepository courseRepository;
     private final StudentRepository studentRepository;
+    private final SessionRepository sessionRepository;
 
     @Autowired
-    public CourseServiceImpl(LecturerRepository lecturerRepository, DepartmentRepository departmentRepository, CourseRepository courseRepository, StudentRepository studentRepository) {
+    public CourseServiceImpl(LecturerRepository lecturerRepository, DepartmentRepository departmentRepository, CourseRepository courseRepository, StudentRepository studentRepository, SessionRepository sessionRepository) {
         this.lecturerRepository = lecturerRepository;
         this.departmentRepository = departmentRepository;
         this.courseRepository = courseRepository;
         this.studentRepository = studentRepository;
+        this.sessionRepository = sessionRepository;
     }
 
 
@@ -58,7 +52,10 @@ public class CourseServiceImpl implements CourseService {
         department.addCourse(courseEntity);
         lecturer.addCourse(courseEntity);
         courseEntity.setLecturer(lecturer);
+        List<SessionEntity> courseSessions = generateCourseSessions(courseEntity);
+        courseEntity.setCourseSessions(courseSessions);
         courseRepository.save(courseEntity);
+        sessionRepository.saveAll(courseSessions);
         lecturerRepository.save(lecturer);
         departmentRepository.save(department);
     }
@@ -180,5 +177,18 @@ public class CourseServiceImpl implements CourseService {
 
         isUpdated = true;
         return isUpdated;
+    }
+
+    private List<SessionEntity> generateCourseSessions(CourseEntity course){
+        List<SessionEntity> sessions = new ArrayList<>();
+        LocalDate currentDate = course.getStartDate();
+        while (currentDate.isBefore(course.getEndDate())){
+            SessionEntity session = new SessionEntity();
+            session.setSessionDate(currentDate);
+            session.setCourse(course);
+            sessions.add(session);
+            currentDate = currentDate.plusDays(7);
+        }
+        return sessions;
     }
 }

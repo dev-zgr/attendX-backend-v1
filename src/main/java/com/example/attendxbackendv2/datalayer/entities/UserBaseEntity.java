@@ -15,6 +15,7 @@ import lombok.*;
 @NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING, length = 20)
 @EqualsAndHashCode
 public class UserBaseEntity {
 

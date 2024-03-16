@@ -21,8 +21,8 @@ public class StudentDTO extends UserBaseDTO{
 
     private String studentNumber;
 
-    public StudentDTO(String firstName, String lastName, String email, String password, String phoneNumber, AddressDTO address, String studentNumber) {
-        super(firstName, lastName, email, password, phoneNumber, address);
+    public StudentDTO(String firstName, String lastName, String email, String password, String phoneNumber, AddressDTO address, String studentNumber,String role) {
+        super(firstName, lastName, email, password, phoneNumber, address,role);
         this.studentNumber =  studentNumber;
     }
 

@@ -1,5 +1,6 @@
 package com.example.attendxbackendv2.servicelayer.mappers;
 
+import com.example.attendxbackendv2.config.UserConfigConstants;
 import com.example.attendxbackendv2.datalayer.entities.AddressEmbeddable;
 import com.example.attendxbackendv2.datalayer.entities.StudentEntity;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.AddressDTO;
@@ -15,6 +16,7 @@ public class StudentMapper {
     public static StudentDTO mapStudentEntityToStudentDTO(StudentEntity studentEntity, StudentDTO studentDTO, AddressDTO addressDTO, boolean getDetails){
         StudentDTO studentDTOToReturn = UserGenericMapper.mapUserEntityToUserDTO(studentEntity, studentDTO,addressDTO , getDetails);
         studentDTOToReturn.setStudentNumber(studentEntity.getStudentId());
+        studentDTO.setRole(UserConfigConstants.STUDENT_ROLE_VALUE);
         return  studentDTOToReturn;
     }
 

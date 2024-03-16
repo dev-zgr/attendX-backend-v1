@@ -28,8 +28,8 @@ public class LecturerDTO extends UserBaseDTO{
     @Size(max = 100, message = "Department must be less than or equal to 100 characters")
     private String department;
 
-    public LecturerDTO(String firstName, String lastName, String email, String password, String phoneNumber, AddressDTO address,String department) {
-        super(firstName, lastName, email, password, phoneNumber, address);
+    public LecturerDTO(String firstName, String lastName, String email, String password, String phoneNumber, AddressDTO address,String department, String role) {
+        super(firstName, lastName, email, password, phoneNumber, address, role);
         this.department = department;
     }
 

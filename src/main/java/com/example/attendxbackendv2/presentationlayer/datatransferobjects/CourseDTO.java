@@ -72,5 +72,10 @@ public class CourseDTO {
             implementation =  StudentDTO.class
     )
     private List<StudentDTO> enrolledStudents;
-    //TODO add attendances of students here
+
+    @Schema(
+            description = "Stores the sessions of the course",
+            implementation =  SessionDTO.class
+    )
+    private List<SessionDTO> courseSessions;
 }

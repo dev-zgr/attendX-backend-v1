@@ -1,6 +1,7 @@
 package com.example.attendxbackendv2.datalayer.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -51,6 +52,10 @@ public class CourseEntity {
     @JsonBackReference
     private LecturerEntity lecturer;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<SessionEntity> courseSessions;
+
     public CourseEntity(String courseCode, String courseName, String description, LocalDate startDate, LocalDate endDate, DepartmentEntity department, LecturerEntity lecturerEntity){
         this.courseCode = courseCode;
         this.courseName = courseName;
@@ -59,11 +64,13 @@ public class CourseEntity {
         this.endDate = endDate;
         this.department = department;
         this.enrolledStudents = new ArrayList<>();
+        this.courseSessions = new ArrayList<>();
         this.lecturer =lecturerEntity;
     }
 
     public CourseEntity() {
         this.enrolledStudents = new ArrayList<>();
+        this.courseSessions = new ArrayList<>();
         this.lecturer = null;
         this.courseCode = null;
         this.courseName = null;

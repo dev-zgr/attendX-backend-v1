@@ -3,10 +3,13 @@ package com.example.attendxbackendv2.servicelayer.mappers;
 import com.example.attendxbackendv2.datalayer.entities.CourseEntity;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.AddressDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.CourseDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.SessionDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.StudentDTO;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import static com.example.attendxbackendv2.servicelayer.mappers.SessionMapper.mapToSessionDTO;
 
 public class CourseMapper {
 
@@ -36,6 +39,8 @@ public class CourseMapper {
                     new StudentDTO(),
                     new AddressDTO(),
                     false )).toList());
+            courseDTO.setCourseSessions(courseEntity.getCourseSessions().stream().map(sessionEntity -> mapToSessionDTO(sessionEntity, new SessionDTO())).toList()
+            );
         }
         return courseDTO;
     }

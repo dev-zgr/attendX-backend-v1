@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EditorDTO extends UserBaseDTO {
 
-    public EditorDTO(String firstName, String lastName, String email, String password, String phoneNumber, AddressDTO address) {
-        super(firstName, lastName, email, password, phoneNumber, address);
+    public EditorDTO(String firstName, String lastName, String email, String password, String phoneNumber, AddressDTO address,String role) {
+        super(firstName, lastName, email, password, phoneNumber, address,role);
     }
 
 }
