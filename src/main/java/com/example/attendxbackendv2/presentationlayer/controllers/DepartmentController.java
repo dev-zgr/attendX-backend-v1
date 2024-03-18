@@ -71,7 +71,7 @@ public class DepartmentController {
     @PostMapping(path = "/department", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO> createDepartment(@Valid @RequestBody DepartmentDTO departmentDTO) {
         departmentService.createDepartment(departmentDTO);
-        return ResponseEntity.status(201).body(new ResponseDTO(
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(
                 Integer.toString(HttpStatus.CREATED.value()),
                 "Department created successfully"));
     }

@@ -179,7 +179,24 @@ public class CourseServiceImpl implements CourseService {
         return isUpdated;
     }
 
-    private List<SessionEntity> generateCourseSessions(CourseEntity course){
+    @Override
+    @Transactional
+    public boolean enrollStudent(String courseCode, String studentId) throws ResourceNotFoundException {
+        boolean isEnrolled = false;
+        CourseEntity course = courseRepository.findCourseEntityByCourseCodeIgnoreCase(courseCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Course", "courseCode", courseCode));
+        StudentEntity student = studentRepository.findStudentEntityByStudentId(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student", "studentId", studentId));
+        course.enrollStudent(student);
+        courseRepository.save(course);
+        student.enrollToCourse(course);
+        studentRepository.save(student);
+        isEnrolled = true;
+        return isEnrolled;
+    }
+
+    @Transactional
+    public List<SessionEntity> generateCourseSessions(CourseEntity course){
         List<SessionEntity> sessions = new ArrayList<>();
         LocalDate currentDate = course.getStartDate();
         while (currentDate.isBefore(course.getEndDate())){

@@ -30,8 +30,8 @@ public class CourseMapper {
         courseDTO.setCourseCode(courseEntity.getCourseCode());
         courseDTO.setCourseName(courseEntity.getCourseName());
         courseDTO.setDepartmentName(courseEntity.getDepartment().getDepartmentName());
+        courseDTO.setDescription(courseEntity.getDescription());
         if (getDetails) {
-            courseDTO.setDescription(courseEntity.getDescription());
             courseDTO.setStartDate(courseEntity.getStartDate().toString());
             courseDTO.setEndDate(courseEntity.getEndDate().toString());
             courseDTO.setLecturerEmail(courseEntity.getLecturer().getEmail());

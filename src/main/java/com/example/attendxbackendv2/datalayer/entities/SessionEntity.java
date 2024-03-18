@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -43,5 +44,12 @@ public class SessionEntity {
         this.course = null;
         attendance = new HashMap<>();
 
+    }
+
+    public void startSession(){
+        List<StudentEntity> registeredStudents =  course.getEnrolledStudents();
+        registeredStudents.forEach(studentEntity -> {
+            this.attendance.put(studentEntity, false);
+        });
     }
 }

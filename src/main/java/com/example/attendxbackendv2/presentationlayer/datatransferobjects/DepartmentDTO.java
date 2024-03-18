@@ -32,6 +32,9 @@ public class DepartmentDTO {
     private String description;
 
     private List<LecturerDTO> lecturers;
+
+    //TODO add courseDTO
+//    private List<CourseDTO> courseDTOS;
 }
 
 

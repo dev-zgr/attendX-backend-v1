@@ -45,5 +45,14 @@ public interface CourseService {
      *                                   or trying to change the department of the student to a non-existing department.
      */
     boolean updateCourse(CourseDTO courseDTO);
+
+    /**
+     * Enrolls a student to a course.
+     * @param courseCode the course code of the course to be enrolled
+     * @param studentID the student ID of the student to be enrolled
+     * @return true if the course is deleted successfully
+     * @throws ResourceNotFoundException if no such course found with the specified code
+     */
+    boolean enrollStudent(String courseCode, String studentID) throws ResourceNotFoundException;
 }
 

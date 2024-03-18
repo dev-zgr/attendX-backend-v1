@@ -20,7 +20,8 @@ public class SessionMapper {
                         Map.Entry::getValue
                 ));
 
-        sessionDTO.setAttendance(attendance);
+//        sessionDTO.setAttendance(attendance);
+        sessionDTO.setSessionId(sessionEntity.getSessionId());
         return sessionDTO;
     }
 }

@@ -65,10 +65,13 @@ public class CourseController {
                     )
             )
     })
-    @PostMapping(path = "/course", consumes = "application/json")
+    @PostMapping(path = "/course" ,
+    consumes = {MediaType.APPLICATION_JSON_VALUE},
+    produces = {MediaType.APPLICATION_JSON_VALUE}
+    )
     public ResponseEntity<ResponseDTO> createCourse(@RequestBody CourseDTO courseDTO) {
         courseService.createCourse(courseDTO);
-        return ResponseEntity.status(201).body(new ResponseDTO(
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(
                 CourseConstants.STATUS_201,
                 CourseConstants.MESSAGE_201));
 
@@ -194,6 +197,50 @@ public class CourseController {
     )
     public ResponseEntity<ResponseDTO> updateCourse(@Valid @RequestBody CourseDTO courseDTO) {
         boolean isCourseUpdated = courseService.updateCourse(courseDTO);
+        if (isCourseUpdated) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO(
+                    CourseConstants.STATUS_200, CourseConstants.MESSAGE_200));
+        } else {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
+                    new ResponseDTO(
+                            CourseConstants.STATUS_417, CourseConstants.MESSAGE_417_UPDATE)
+            );
+        }
+    }
+
+    @Operation(
+            summary = "Enroll Student Course REST API",
+            description = "Update the Student and Course in the AttendX application to enroll the student to the course."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK",
+                    content = @Content(
+                            schema = @Schema(implementation = ResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "HTTP Status Not Found it may be causing due to trying to access non-existing course",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
+    })
+    @PatchMapping(path = "/course",
+            produces = {MediaType.APPLICATION_JSON_VALUE}
+    )
+    public ResponseEntity<ResponseDTO> enrollToCourse(@RequestParam(name = "course-code") String courseCode,
+                                                      @RequestParam(name = "student-id") String studentID) {
+        boolean isCourseUpdated = courseService.enrollStudent(courseCode,studentID);
         if (isCourseUpdated) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO(
                     CourseConstants.STATUS_200, CourseConstants.MESSAGE_200));
