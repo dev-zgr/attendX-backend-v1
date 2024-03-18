@@ -28,6 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1", produces = "application/json")
 @Validated
+@CrossOrigin(origins = "${attendx.crossorigin.url}")
 public class LecturerController {
 
     private final LecturerService lecturerService;
@@ -98,8 +99,7 @@ public class LecturerController {
 
             }
     )
-    @GetMapping(path = "/lecturer", consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(path = "/lecturer", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<List<LecturerDTO>> getAllDepartments(
             @RequestParam(value = "page-no", defaultValue = "0") int pageNo,
             @RequestParam(value = "ascending", defaultValue = "true") boolean ascending) {

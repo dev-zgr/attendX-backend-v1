@@ -29,6 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/api/v1",produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
+@CrossOrigin(origins = "${attendx.crossorigin.url}")
 public class DepartmentController {
 
     private final DepartmentService departmentService;
@@ -142,11 +143,10 @@ public class DepartmentController {
             }
     )
     @GetMapping(path = "/department",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<List<DepartmentDTO>> getAllDepartments(
             @RequestParam(name = "page-no", defaultValue = "0") int pageNo,
-            @RequestParam(name = "ascending", defaultValue = "false") boolean ascending,
+            @RequestParam(name = "ascending", defaultValue = "true") boolean ascending,
             @RequestParam(name = "get-details", defaultValue = "false") boolean getDetails) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(departmentService.getAllDepartments(pageNo, ascending));

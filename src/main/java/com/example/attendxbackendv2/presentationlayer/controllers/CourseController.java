@@ -28,6 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1", produces = "application/json")
 @Validated
+@CrossOrigin(origins = "${attendx.crossorigin.url}")
 public class CourseController {
     private final CourseService courseService;
 
