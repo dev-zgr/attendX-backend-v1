@@ -1,5 +1,6 @@
 package com.example.attendxbackendv2.datalayer.entities;
 
+import com.example.attendxbackendv2.interfaces.SelectableInterface;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +14,7 @@ import java.util.List;
 @Entity
 @DiscriminatorValue("LECTURER")
 @Data
-public class LecturerEntity extends UserBaseEntity{
+public class LecturerEntity extends UserBaseEntity implements SelectableInterface {
 
 
 
@@ -42,6 +43,16 @@ public class LecturerEntity extends UserBaseEntity{
 
     public void removeCourse(CourseEntity courseEntity){
         courses.removeIf(course -> course.getCourseCode().equals(courseEntity.getCourseCode()));
+    }
+
+    @Override
+    public String getIdentifier() {
+        return this.getEmail();
+    }
+
+    @Override
+    public String getLabel() {
+        return String.format("%s %s", this.getFirstName(), this.getLastName());
     }
 }
 

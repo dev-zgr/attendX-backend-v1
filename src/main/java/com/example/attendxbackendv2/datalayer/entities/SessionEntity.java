@@ -48,8 +48,6 @@ public class SessionEntity {
 
     public void startSession(){
         List<StudentEntity> registeredStudents =  course.getEnrolledStudents();
-        registeredStudents.forEach(studentEntity -> {
-            this.attendance.put(studentEntity, false);
-        });
+        registeredStudents.forEach(studentEntity -> this.attendance.put(studentEntity, false));
     }
 }

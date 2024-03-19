@@ -39,11 +39,10 @@ public class CourseServiceImpl implements CourseService {
     }
 
 
-
     @Override
     @Transactional
     public void createCourse(CourseDTO courseDTO) throws ResourceNotFoundException, CourseAlreadyExistsException {
-        LecturerEntity lecturer= lecturerRepository.findLecturerEntityByEmailIgnoreCase(courseDTO.getLecturerEmail())
+        LecturerEntity lecturer = lecturerRepository.findLecturerEntityByEmailIgnoreCase(courseDTO.getLecturerEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Lecturer", "email", courseDTO.getLecturerEmail()));
         DepartmentEntity department = departmentRepository.findByDepartmentNameIgnoreCase(courseDTO.getDepartmentName())
                 .orElseThrow(() -> new ResourceNotFoundException("Department", "name", courseDTO.getDepartmentName()));
@@ -70,7 +69,7 @@ public class CourseServiceImpl implements CourseService {
             pageable = PageRequest.of(pageNo, pageSize, Sort.by("courseCode").descending());
         }
         List<CourseEntity> courseEntities = courseRepository.findAll(pageable).getContent();
-        return courseEntities.stream().map(courseEntity -> CourseMapper.mapToCourseDTO( courseEntity, new CourseDTO(),false)).toList();
+        return courseEntities.stream().map(courseEntity -> CourseMapper.mapToCourseDTO(courseEntity, new CourseDTO(), false)).toList();
 
     }
 
@@ -124,8 +123,8 @@ public class CourseServiceImpl implements CourseService {
         Set<StudentEntity> newStudents = new HashSet<>(courseDTO.getEnrolledStudents().stream().map(student -> studentRepository.findStudentEntityByStudentId(student.getStudentNumber())
                 .orElseThrow(() -> new ResourceNotFoundException("Student", "email", student.getEmail()))).toList());
 
-        try{
-            if(!Objects.equals(oldDepartment.getDepartmentId(), newDepartment.getDepartmentId())){
+        try {
+            if (!Objects.equals(oldDepartment.getDepartmentId(), newDepartment.getDepartmentId())) {
                 //get rid of the old department
                 oldDepartment.removeCourse(courseToUpdate);
                 departmentRepository.save(oldDepartment);
@@ -136,7 +135,7 @@ public class CourseServiceImpl implements CourseService {
                 newDepartment.addCourse(courseToUpdate);
                 departmentRepository.save(newDepartment);
             }
-            if(!Objects.equals(oldLecturer.getUserId(), newLecturer.getUserId())){
+            if (!Objects.equals(oldLecturer.getUserId(), newLecturer.getUserId())) {
                 //get rid of the old lecturer
                 oldLecturer.removeCourse(courseToUpdate);
                 lecturerRepository.save(oldLecturer);
@@ -155,7 +154,6 @@ public class CourseServiceImpl implements CourseService {
             studentsToAdd.removeAll(oldStudents);
 
             for (StudentEntity student : studentsToRemove) {
-                //First get rid of the student
                 student.unrollFromCourse(courseToUpdate);
                 studentRepository.save(student);
 
@@ -170,7 +168,7 @@ public class CourseServiceImpl implements CourseService {
                 studentRepository.save(student);
             }
 
-        }finally {
+        } finally {
             courseRepository.save(courseToUpdate);
 
         }
@@ -196,10 +194,10 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Transactional
-    public List<SessionEntity> generateCourseSessions(CourseEntity course){
+    public List<SessionEntity> generateCourseSessions(CourseEntity course) {
         List<SessionEntity> sessions = new ArrayList<>();
         LocalDate currentDate = course.getStartDate();
-        while (currentDate.isBefore(course.getEndDate())){
+        while (currentDate.isBefore(course.getEndDate())) {
             SessionEntity session = new SessionEntity();
             session.setSessionDate(currentDate);
             session.setCourse(course);

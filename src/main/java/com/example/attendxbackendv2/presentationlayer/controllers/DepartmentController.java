@@ -27,7 +27,7 @@ import java.util.List;
         description = "Provides a fully functional CRUD REST API for Departments in the attendX application."
 )
 @RestController
-@RequestMapping(path = "/api/v1",produces = {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(path = "/api/v1", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
 @CrossOrigin(origins = "${attendx.crossorigin.url}")
 public class DepartmentController {
@@ -112,9 +112,10 @@ public class DepartmentController {
                     )
             })
     @GetMapping(path = "/department/{departmentName}",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<DepartmentDTO> getDepartmentByName(@PathVariable String departmentName, @RequestParam(name = "get-details") boolean getDetails) {
+    public ResponseEntity<DepartmentDTO> getDepartmentByName(
+            @PathVariable String departmentName,
+            @RequestParam(name = "get-details", defaultValue = "true", required = false) boolean getDetails) {
         return ResponseEntity.ok(departmentService.fetchDepartmentDetailsByDepartmentName(departmentName, getDetails));
     }
 
@@ -146,8 +147,7 @@ public class DepartmentController {
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<List<DepartmentDTO>> getAllDepartments(
             @RequestParam(name = "page-no", defaultValue = "0") int pageNo,
-            @RequestParam(name = "ascending", defaultValue = "true") boolean ascending,
-            @RequestParam(name = "get-details", defaultValue = "false") boolean getDetails) {
+            @RequestParam(name = "ascending", defaultValue = "true") boolean ascending) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(departmentService.getAllDepartments(pageNo, ascending));
     }

@@ -2,9 +2,7 @@ package com.example.attendxbackendv2.servicelayer.implementations;
 
 import com.example.attendxbackendv2.datalayer.entities.SessionEntity;
 import com.example.attendxbackendv2.datalayer.entities.StudentEntity;
-import com.example.attendxbackendv2.datalayer.repositories.CourseRepository;
 import com.example.attendxbackendv2.datalayer.repositories.SessionRepository;
-import com.example.attendxbackendv2.datalayer.repositories.StudentRepository;
 import com.example.attendxbackendv2.servicelayer.exceptions.NotRelatedException;
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
 import com.example.attendxbackendv2.servicelayer.exceptions.SessionExpiredException;
@@ -14,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Service
 public class SessionServiceImpl implements SessionService {

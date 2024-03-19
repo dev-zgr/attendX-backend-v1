@@ -18,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.*;
-
 @Tag(
         name = "Session",
         description = "Session API endpoints")

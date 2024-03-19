@@ -1,5 +1,6 @@
 package com.example.attendxbackendv2.datalayer.entities;
 
+import com.example.attendxbackendv2.interfaces.SelectableInterface;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -18,7 +19,7 @@ import java.util.List;
 @Entity
 @Data
 @ToString
-public class DepartmentEntity{
+public class DepartmentEntity implements SelectableInterface {
     /**
      * The departmentId is a unique identifier for the department
      */
@@ -82,5 +83,15 @@ public class DepartmentEntity{
 
     public void removeCourse(CourseEntity courseEntity){
         courses.removeIf(course -> course.getCourseCode().equals(courseEntity.getCourseCode()));
+    }
+
+    @Override
+    public String getIdentifier() {
+        return this.departmentName;
+    }
+
+    @Override
+    public String getLabel() {
+        return this.departmentName;
     }
 }
