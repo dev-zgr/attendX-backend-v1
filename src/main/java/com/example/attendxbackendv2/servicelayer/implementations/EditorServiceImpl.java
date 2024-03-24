@@ -65,14 +65,11 @@ public class EditorServiceImpl implements EditorService {
     @Transactional
     public boolean updateEditor(EditorDTO editorDTO) throws ResourceNotFoundException {
         boolean isUpdated = false;
-        editorRepository.findEditorEntitiesByEmailIgnoreCase(editorDTO.getEmail())
+        EditorEntity editorToUpdate =editorRepository.findEditorEntitiesByEmailIgnoreCase(editorDTO.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Editor",
                         "email",
                         editorDTO.getEmail()));
 
-        // Find the editor
-        EditorEntity editorToUpdate =
-                editorRepository.findEditorEntitiesByEmailIgnoreCase(editorDTO.getEmail()).get();
 
         // Update other fields on Editor
         EditorMapper.mapEditorDTOToUserBaseEntity(editorToUpdate, editorDTO, new AddressEmbeddable());
@@ -89,5 +86,10 @@ public class EditorServiceImpl implements EditorService {
                 .orElseThrow(() -> new ResourceNotFoundException("Editor", "email", email));
         editorRepository.delete(editor);
         return true;
+    }
+
+    @Override
+    public Long getPageCount() {
+        return (editorRepository.count() + pageSize - 1) / pageSize;
     }
 }

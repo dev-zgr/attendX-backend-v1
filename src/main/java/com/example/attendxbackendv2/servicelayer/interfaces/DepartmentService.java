@@ -1,9 +1,8 @@
 package com.example.attendxbackendv2.servicelayer.interfaces;
+
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.DepartmentDTO;
 import com.example.attendxbackendv2.servicelayer.exceptions.DepartmentAlreadyExistsException;
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -45,6 +44,12 @@ public interface DepartmentService {
 
 
      List<DepartmentDTO> getAllDepartments(int pageNo, boolean ascending);
+
+    /**
+     * This method is used to get the total number of pages in the database
+     * @return the total number of pages
+     */
+    Long getPageCount();
 
 
 

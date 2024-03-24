@@ -33,8 +33,7 @@ public class DepartmentDTO {
 
     private List<LecturerDTO> lecturers;
 
-    //TODO add courseDTO
-//    private List<CourseDTO> courseDTOS;
+   private List<CourseDTO> offeredCourses;
 }
 
 

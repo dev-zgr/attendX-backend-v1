@@ -238,7 +238,7 @@ public class EditorController {
         boolean isDeleted = editorService.deleteEditor(email);
         if (isDeleted) {
             return ResponseEntity
-                    .status(HttpStatus.OK)
+                    .status(HttpStatus.ACCEPTED)
                     .body(new ResponseDTO(EditorConstants.STATUS_200, EditorConstants.MESSAGE_200));
         } else {
             return ResponseEntity

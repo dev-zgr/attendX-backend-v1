@@ -34,7 +34,7 @@ public interface EditorService {
      * @return the requested EditorDTO if found.
      * @throws ResourceNotFoundException if no such editor is found with the specified email.
      */
-    public EditorDTO getEditorByEmail(String email, boolean getDetails) throws ResourceNotFoundException;
+    EditorDTO getEditorByEmail(String email, boolean getDetails) throws ResourceNotFoundException;
     /**
      * Updates the existing Editor by fetching it from the database and applying recent changes.
      *
@@ -52,5 +52,10 @@ public interface EditorService {
      */
     boolean deleteEditor(String email);
 
+    /**
+     * This method is used to get the total number of pages in the database
+     * @return the total number of pages
+     */
+    Long getPageCount();
 }
 

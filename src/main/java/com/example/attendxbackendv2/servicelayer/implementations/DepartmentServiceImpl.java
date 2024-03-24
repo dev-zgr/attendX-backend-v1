@@ -1,14 +1,15 @@
 package com.example.attendxbackendv2.servicelayer.implementations;
 
 import com.example.attendxbackendv2.datalayer.entities.DepartmentEntity;
-import com.example.attendxbackendv2.datalayer.entities.LecturerEntity;
 import com.example.attendxbackendv2.datalayer.repositories.DepartmentRepository;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.AddressDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.CourseDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.DepartmentDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.LecturerDTO;
 import com.example.attendxbackendv2.servicelayer.exceptions.DepartmentAlreadyExistsException;
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
 import com.example.attendxbackendv2.servicelayer.interfaces.DepartmentService;
+import com.example.attendxbackendv2.servicelayer.mappers.CourseMapper;
 import com.example.attendxbackendv2.servicelayer.mappers.DepartmentMapper;
 import com.example.attendxbackendv2.servicelayer.mappers.LecturerMapper;
 import jakarta.transaction.Transactional;
@@ -20,8 +21,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
@@ -54,6 +53,11 @@ public class DepartmentServiceImpl implements DepartmentService {
             departmentDTO.setLecturers(
                     departmentEntity.getRegisteredLecturers().stream().map(
                             lecturerEntity -> LecturerMapper.mapLecturerEntityToLecturerDTO(lecturerEntity, new LecturerDTO(), new AddressDTO(), false)
+                    ).toList()
+            );
+            departmentDTO.setOfferedCourses(
+                    departmentEntity.getCourses().stream().map(
+                            courseEntity -> CourseMapper.mapToCourseDTO(courseEntity, new CourseDTO(),false)
                     ).toList()
             );
         }
@@ -94,6 +98,11 @@ public class DepartmentServiceImpl implements DepartmentService {
         return departmentEntities.stream()
                 .map(departmentEntity -> DepartmentMapper
                         .mapToDepartmentDTO(departmentEntity, new DepartmentDTO())).toList();
+    }
+
+    @Override
+    public Long getPageCount() {
+        return (departmentRepository.count() + pageSize - 1) / pageSize;
     }
 
 }

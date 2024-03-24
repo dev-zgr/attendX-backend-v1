@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "attendx.crossorigin.url",
+      "type": "java.lang.String",
+      "description": "Description for attendx.crossorigin.url."
+  }
+] }
