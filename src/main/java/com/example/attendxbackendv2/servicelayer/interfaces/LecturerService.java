@@ -21,7 +21,6 @@ public interface LecturerService {
      * It uses pagination and sorting by instructors first name.
      * @param pageNo page number of the result. See application.properties for the page size
      * @param ascending sorting order
-     * @return
      */
     List<LecturerDTO> getAllLecturers(int pageNo, boolean ascending);
 
@@ -53,4 +52,10 @@ public interface LecturerService {
      * @return true if entity deleted successfully, false otherwise
      */
     boolean deleteLecturer(String email);
+
+    /**
+     * This method is used to get the total number of pages in the database
+     * @return the total number of pages
+     */
+    Long getPageCount();
 }

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -145,4 +146,20 @@ public class SessionController {
         }
     }
 
+
+
+    @GetMapping(path = "/session/{sessionId}",
+            produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
+    public ResponseEntity<byte[]> getAttendanceReport(
+            @PathVariable Long sessionId) {
+
+        byte[] file = sessionService.getAttendanceReport(sessionId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "attendance.pdf");
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .body(file);
+    }
 }

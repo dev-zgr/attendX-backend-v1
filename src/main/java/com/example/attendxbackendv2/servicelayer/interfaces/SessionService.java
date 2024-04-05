@@ -19,4 +19,10 @@ public interface SessionService {
      */
     boolean startSession(Long sessionId);
 
+    /**
+     * Prepares the attandance report and returns the attendance report as a byte array.
+     * @param sessionId requested sessions ID
+     * @return byte array of the attendance report
+     */
+    byte[] getAttendanceReport(Long sessionId);
 }

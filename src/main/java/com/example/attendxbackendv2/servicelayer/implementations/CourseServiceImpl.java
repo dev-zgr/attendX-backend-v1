@@ -206,4 +206,9 @@ public class CourseServiceImpl implements CourseService {
         }
         return sessions;
     }
+
+    @Override
+    public Long getPageCount() {
+        return (lecturerRepository.count() + pageSize - 1) / pageSize;
+    }
 }

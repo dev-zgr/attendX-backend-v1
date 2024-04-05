@@ -54,5 +54,11 @@ public interface CourseService {
      * @throws ResourceNotFoundException if no such course found with the specified code
      */
     boolean enrollStudent(String courseCode, String studentID) throws ResourceNotFoundException;
+
+    /**
+     * This method is used to get the total number of pages in the database
+     * @return the total number of pages
+     */
+    Long getPageCount();
 }
 

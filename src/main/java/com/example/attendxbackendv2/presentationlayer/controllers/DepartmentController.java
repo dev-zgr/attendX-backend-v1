@@ -2,6 +2,7 @@ package com.example.attendxbackendv2.presentationlayer.controllers;
 
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.DepartmentDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ErrorResponseDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.GenericListResponseDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ResponseDTO;
 import com.example.attendxbackendv2.servicelayer.contants.DepartmentConstants;
 import com.example.attendxbackendv2.servicelayer.interfaces.DepartmentService;
@@ -19,8 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(
         name = "CRUD REST APIs for Departments",
@@ -145,11 +144,15 @@ public class DepartmentController {
     )
     @GetMapping(path = "/department",
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<List<DepartmentDTO>> getAllDepartments(
+    public ResponseEntity<GenericListResponseDTO<DepartmentDTO>> getAllDepartments(
             @RequestParam(name = "page-no", defaultValue = "0") int pageNo,
             @RequestParam(name = "ascending", defaultValue = "true") boolean ascending) {
+
+        GenericListResponseDTO<DepartmentDTO> response = new GenericListResponseDTO<>();
+        response.setData(departmentService.getAllDepartments(pageNo, ascending));
+        response.setPageNumber(departmentService.getPageCount());
         return ResponseEntity.status(HttpStatus.OK)
-                .body(departmentService.getAllDepartments(pageNo, ascending));
+                .body(response);
     }
 
     @Operation(

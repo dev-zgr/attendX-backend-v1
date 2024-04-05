@@ -2,6 +2,7 @@ package com.example.attendxbackendv2.presentationlayer.controllers;
 
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.EditorDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ErrorResponseDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.GenericListResponseDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ResponseDTO;
 import com.example.attendxbackendv2.servicelayer.contants.EditorConstants;
 import com.example.attendxbackendv2.servicelayer.interfaces.EditorService;
@@ -18,8 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(
         name = "Editor",
@@ -94,14 +93,17 @@ public class EditorController {
 
     )
     @GetMapping(path = "/editor", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<List<EditorDTO>> getAllEditors(
+    public ResponseEntity<GenericListResponseDTO<EditorDTO>> getAllEditors(
             @RequestParam(value = "page-no", defaultValue = "0")
             int pageNo,
             @RequestParam(value = "ascending", defaultValue = "true")
             boolean ascending) {
+        GenericListResponseDTO<EditorDTO> response  = new GenericListResponseDTO<>();
+        response.setData(editorService.getAllEditors(pageNo, ascending));
+        response.setPageNumber(editorService.getPageCount());
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(editorService.getAllEditors(pageNo, ascending));
+                .body(response);
     }
 
     @Operation(
@@ -194,7 +196,7 @@ public class EditorController {
         boolean isUpdated = editorService.updateEditor(editorDTO);
         if (isUpdated) {
             return ResponseEntity
-                    .status(HttpStatus.OK)
+                    .status(HttpStatus.ACCEPTED)
                     .body(new ResponseDTO(EditorConstants.STATUS_200, EditorConstants.MESSAGE_200));
         } else {
             return ResponseEntity

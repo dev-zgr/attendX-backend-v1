@@ -1,6 +1,7 @@
 package com.example.attendxbackendv2.presentationlayer.controllers;
 
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ErrorResponseDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.GenericListResponseDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ResponseDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.StudentDTO;
 import com.example.attendxbackendv2.servicelayer.contants.StudentConstants;
@@ -18,8 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(
         name = "Student",
@@ -98,12 +97,15 @@ public class StudentController {
             }
     )
     @GetMapping(path = "/student", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<List<StudentDTO>> getAllStudents(
+    public ResponseEntity<GenericListResponseDTO<StudentDTO>> getAllStudents(
             @RequestParam(value = "page-no", defaultValue = "0") int pageNo,
             @RequestParam(value = "ascending", defaultValue = "true") boolean ascending) {
+        GenericListResponseDTO<StudentDTO> response  = new GenericListResponseDTO<>();
+        response.setData(studentService.getAllStudents(pageNo, ascending));
+        response.setPageNumber(studentService.getPageCount());
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(studentService.getAllStudents(pageNo, ascending));
+                .body(response);
     }
 
     @Operation(

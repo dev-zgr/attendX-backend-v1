@@ -39,9 +39,11 @@ public class CourseMapper {
                     new StudentDTO(),
                     new AddressDTO(),
                     false )).toList());
-            courseDTO.setCourseSessions(courseEntity.getCourseSessions().stream().filter(sessionEntity -> sessionEntity.getSessionDate().isBefore(LocalDate.now())).map(sessionEntity -> mapToSessionDTO(sessionEntity, new SessionDTO())).toList()
+            courseDTO.setCourseSessions(courseEntity.getCourseSessions().stream().map(sessionEntity -> mapToSessionDTO(sessionEntity, new SessionDTO())).toList()
             );
         }
         return courseDTO;
     }
 }
+
+//courseEntity.getCourseSessions().stream().filter(sessionEntity -> sessionEntity.getSessionDate().isBefore(LocalDate.now())).map(sessionEntity -> mapToSessionDTO(sessionEntity, new SessionDTO())

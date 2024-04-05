@@ -6,13 +6,12 @@ import com.example.attendxbackendv2.datalayer.entities.LecturerEntity;
 import com.example.attendxbackendv2.datalayer.repositories.DepartmentRepository;
 import com.example.attendxbackendv2.datalayer.repositories.LecturerRepository;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.AddressDTO;
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.DepartmentDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.CourseDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.LecturerDTO;
 import com.example.attendxbackendv2.servicelayer.exceptions.LecturerAlreadyExistException;
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
 import com.example.attendxbackendv2.servicelayer.interfaces.LecturerService;
-import com.example.attendxbackendv2.servicelayer.mappers.AddressMapper;
-import com.example.attendxbackendv2.servicelayer.mappers.DepartmentMapper;
+import com.example.attendxbackendv2.servicelayer.mappers.CourseMapper;
 import com.example.attendxbackendv2.servicelayer.mappers.LecturerMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 
 import java.util.List;
 
@@ -75,7 +73,10 @@ public class LecturerServiceImpl implements LecturerService {
     @Transactional
     public LecturerDTO getLecturerByEmail(String email, boolean getDetails) throws ResourceNotFoundException {
         LecturerEntity lecturer = lecturerRepository.findLecturerEntityByEmailIgnoreCase(email).orElseThrow(() -> new ResourceNotFoundException("Lecturer", "email", email));
-        return LecturerMapper.mapLecturerEntityToLecturerDTO(lecturer, new LecturerDTO(), new AddressDTO(), getDetails);
+        LecturerDTO lecturerDTO = LecturerMapper.mapLecturerEntityToLecturerDTO(lecturer, new LecturerDTO(), new AddressDTO(), getDetails);
+        List<CourseDTO> courseDTOS = lecturer.getCourses().stream().map(courseEntity -> CourseMapper.mapToCourseDTO(courseEntity, new CourseDTO(), false)).toList();
+        lecturerDTO.setCourses(courseDTOS);
+        return lecturerDTO;
     }
 
     @Override
@@ -136,5 +137,10 @@ public class LecturerServiceImpl implements LecturerService {
         lecturer.setRegisteredDepartment(null);
         lecturerRepository.delete(lecturer);
         return true;
+    }
+
+    @Override
+    public Long getPageCount() {
+        return (lecturerRepository.count() + pageSize - 1) / pageSize;
     }
 }

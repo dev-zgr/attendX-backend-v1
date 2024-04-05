@@ -55,5 +55,10 @@ public interface StudentService {
      */
     boolean deleteStudent(String email);
 
+    /**
+     * This method is used to get the total number of pages in the database
+     * @return the total number of pages
+     */
+    Long getPageCount();
 }
 

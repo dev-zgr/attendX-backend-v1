@@ -84,5 +84,10 @@ public class StudentServiceImpl implements StudentService {
         return true;
     }
 
+    @Override
+    public Long getPageCount() {
+        return (studentRepository.count() + pageSize - 1) / pageSize;
+    }
+
 
 }

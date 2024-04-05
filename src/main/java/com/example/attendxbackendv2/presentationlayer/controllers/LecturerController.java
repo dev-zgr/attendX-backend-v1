@@ -1,9 +1,6 @@
 package com.example.attendxbackendv2.presentationlayer.controllers;
 
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.DepartmentDTO;
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ErrorResponseDTO;
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.LecturerDTO;
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ResponseDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.*;
 import com.example.attendxbackendv2.servicelayer.contants.LecturerContents;
 import com.example.attendxbackendv2.servicelayer.interfaces.LecturerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,8 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(
         name = "Lecturer",
@@ -100,12 +95,15 @@ public class LecturerController {
             }
     )
     @GetMapping(path = "/lecturer", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<List<LecturerDTO>> getAllDepartments(
+    public ResponseEntity<GenericListResponseDTO<LecturerDTO>> getAllDepartments(
             @RequestParam(value = "page-no", defaultValue = "0") int pageNo,
             @RequestParam(value = "ascending", defaultValue = "true") boolean ascending) {
+        GenericListResponseDTO<LecturerDTO> response  = new GenericListResponseDTO<>();
+        response.setData(lecturerService.getAllLecturers(pageNo, ascending));
+        response.setPageNumber(lecturerService.getPageCount());
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(lecturerService.getAllLecturers(pageNo, ascending));
+                .body(response);
     }
 
 
@@ -147,8 +145,7 @@ public class LecturerController {
                             )
                     )
             })
-    @GetMapping(path = "/lecturer/{email}", consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(path = "/lecturer/{email}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<LecturerDTO> getLecturerByEmail(@PathVariable String email, @RequestParam(value = "get-details", defaultValue = "true") boolean getDetails) {
         return ResponseEntity
                 .status(HttpStatus.OK)

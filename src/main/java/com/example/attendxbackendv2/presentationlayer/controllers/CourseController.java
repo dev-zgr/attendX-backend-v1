@@ -1,9 +1,6 @@
 package com.example.attendxbackendv2.presentationlayer.controllers;
 
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.CourseDTO;
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ErrorResponseDTO;
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ResponseDTO;
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.StudentDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.*;
 import com.example.attendxbackendv2.servicelayer.contants.CourseConstants;
 import com.example.attendxbackendv2.servicelayer.interfaces.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,8 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(
         name = "Course API endpoints",
@@ -102,12 +97,15 @@ public class CourseController {
             }
     )
     @GetMapping(path = "/course", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<List<CourseDTO>> getAllCourses(
+    public ResponseEntity<GenericListResponseDTO<CourseDTO>> getAllCourses(
             @RequestParam(value = "page-no", defaultValue = "0") int pageNo,
             @RequestParam(value = "ascending", defaultValue = "true") boolean ascending) {
+        GenericListResponseDTO<CourseDTO> response  = new GenericListResponseDTO<>();
+        response.setData(courseService.getAllCourses(pageNo, ascending));
+        response.setPageNumber(courseService.getPageCount());
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(courseService.getAllCourses(pageNo, ascending));
+                .body(response);
     }
 
 

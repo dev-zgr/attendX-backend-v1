@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.UUID;
+
 /**
  * This class is used to map the fields that all the entities that has
  */
@@ -24,6 +26,13 @@ public class UserBaseEntity {
     @Column(name = "user_id")
     private Long userId;
 
+    @Column(name = "session_token")
+    private UUID sessionToken;
+
+    @Column(name = "user_type", insertable = false, updatable = false)
+    private String userType;
+
+
     @NotEmpty(message = "Lecturer name cannot be null or empty")
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -32,7 +41,7 @@ public class UserBaseEntity {
     @Size(max = 60, message = "Last name must be less than or equal to 60 characters")
     private String lastName;
 
-    @Column(name = "e_mail")
+    @Column(name = "e_mail", unique = true)
     private String email;
 
     @Column(name = "password")

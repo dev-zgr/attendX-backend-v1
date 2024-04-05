@@ -26,6 +26,7 @@ public class UserGenericMapper {
             userBaseDTO.setPhoneNumber(userBaseEntity.getPhoneNumber());
             userBaseDTO.setPassword(userBaseEntity.getPassword());
             userBaseDTO.setAddress(AddressMapper.mapAddressEmbeddableToAddressDTO(userBaseEntity.getAddress(), addressDTO));
+            userBaseDTO.setRole(userBaseEntity.getUserType());
         }
 
         return userBaseDTO;
