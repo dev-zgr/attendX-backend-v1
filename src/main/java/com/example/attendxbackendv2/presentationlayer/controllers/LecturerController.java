@@ -95,7 +95,7 @@ public class LecturerController {
             }
     )
     @GetMapping(path = "/lecturer", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<GenericListResponseDTO<LecturerDTO>> getAllDepartments(
+    public ResponseEntity<GenericListResponseDTO<LecturerDTO>> getAllLecturers(
             @RequestParam(value = "page-no", defaultValue = "0") int pageNo,
             @RequestParam(value = "ascending", defaultValue = "true") boolean ascending) {
         GenericListResponseDTO<LecturerDTO> response  = new GenericListResponseDTO<>();

@@ -1,12 +1,16 @@
 package com.example.attendxbackendv2.servicelayer.implementations;
 
+import com.example.attendxbackendv2.datalayer.entities.StudentEntity;
 import com.example.attendxbackendv2.datalayer.entities.UserBaseEntity;
+import com.example.attendxbackendv2.datalayer.repositories.StudentRepository;
 import com.example.attendxbackendv2.datalayer.repositories.UserRepository;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.AddressDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.StudentDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.UserBaseDTO;
 import com.example.attendxbackendv2.servicelayer.exceptions.InvalidCredentialsException;
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
 import com.example.attendxbackendv2.servicelayer.interfaces.LoginService;
+import com.example.attendxbackendv2.servicelayer.mappers.StudentMapper;
 import com.example.attendxbackendv2.servicelayer.mappers.UserGenericMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,10 +22,12 @@ public class LoginServiceImpl implements LoginService {
 
 
     private final UserRepository userRepository;
+    private final StudentRepository studentRepository;
 
     @Autowired
-    public LoginServiceImpl(UserRepository userRepository) {
+    public LoginServiceImpl(UserRepository userRepository, StudentRepository studentRepository) {
         this.userRepository = userRepository;
+        this.studentRepository = studentRepository;
     }
 
     @Override
@@ -67,6 +73,10 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public UserBaseDTO getUserByToken(UUID token) throws InvalidCredentialsException {
         UserBaseEntity userBaseEntity =  userRepository.findUserBaseEntityBySessionToken(token).orElseThrow(() -> new InvalidCredentialsException("Invalid Token"));
+        if(userBaseEntity.getUserType().equals("STUDENT")){
+            StudentEntity student = studentRepository.findStudentEntityByEmailIgnoreCase(userBaseEntity.getEmail()).orElseThrow(() -> new ResourceNotFoundException("Student", "email", userBaseEntity.getEmail()));
+            return StudentMapper.mapStudentEntityToStudentDTO(student, new StudentDTO(), new AddressDTO(), true);
+        }
         return UserGenericMapper.mapUserEntityToUserDTO(userBaseEntity, new UserBaseDTO(), new AddressDTO(), true);
     }
 }

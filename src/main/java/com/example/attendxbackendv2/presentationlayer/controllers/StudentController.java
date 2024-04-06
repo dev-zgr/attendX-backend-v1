@@ -201,7 +201,7 @@ public class StudentController {
         boolean isUpdated = studentService.updateStudent(studentDTO);
         if (isUpdated) {
             return ResponseEntity
-                    .status(HttpStatus.OK)
+                    .status(HttpStatus.ACCEPTED)
                     .body(new ResponseDTO(StudentConstants.STATUS_200, StudentConstants.MESSAGE_200));
         } else {
             return ResponseEntity

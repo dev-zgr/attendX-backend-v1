@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Tag(
         name = "Course API endpoints",
@@ -64,7 +67,7 @@ public class CourseController {
     consumes = {MediaType.APPLICATION_JSON_VALUE},
     produces = {MediaType.APPLICATION_JSON_VALUE}
     )
-    public ResponseEntity<ResponseDTO> createCourse(@RequestBody CourseDTO courseDTO) {
+    public ResponseEntity<ResponseDTO> createCourse(@Valid @RequestBody CourseDTO courseDTO) {
         courseService.createCourse(courseDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(
                 CourseConstants.STATUS_201,
@@ -100,59 +103,16 @@ public class CourseController {
     public ResponseEntity<GenericListResponseDTO<CourseDTO>> getAllCourses(
             @RequestParam(value = "page-no", defaultValue = "0") int pageNo,
             @RequestParam(value = "ascending", defaultValue = "true") boolean ascending) {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
         GenericListResponseDTO<CourseDTO> response  = new GenericListResponseDTO<>();
-        response.setData(courseService.getAllCourses(pageNo, ascending));
+        response.setData(courseService.getAllCourses(pageNo, ascending, token));
         response.setPageNumber(courseService.getPageCount());
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
-
-    @Operation(
-            summary = "Fetch Course by course code REST API",
-            description = "Course student details by email from the attendX application. " +
-                    "This will be mainly used to show all the course details in the UI. " +
-                    "This section fetches the course code, course name, course description course lecturer's email" +
-                    "course start date, course end date, and department name of the course."
-    )
-    @ApiResponses(
-            {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "HTTP Status OK",
-                            content = @Content(
-                                    schema = @Schema(implementation = StudentDTO.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "HTTP Status Internal Server Error",
-                            content = @Content(
-                                    schema = @Schema(implementation = ErrorResponseDTO.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "HTTP Status Bad Request it may be causing due to invalid input",
-                            content = @Content(
-                                    schema = @Schema(implementation = ErrorResponseDTO.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "HTTP Status Not Found it may be causing due to trying to access non-existing course",
-                            content = @Content(
-                                    schema = @Schema(implementation = ErrorResponseDTO.class)
-                            )
-                    )
-            })
-    @GetMapping(path = "/course/{courseCode}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<CourseDTO> getStudentByEmail(@PathVariable String courseCode, @RequestParam(value = "get-details", defaultValue = "true") boolean getDetails) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(courseService.getCourseByCourseCode(courseCode, getDetails));
-    }
 
 
     @Operation(
@@ -161,8 +121,8 @@ public class CourseController {
     )
     @ApiResponses({
             @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status OK",
+                    responseCode = "202",
+                    description = "HTTP Status Accepted",
                     content = @Content(
                             schema = @Schema(implementation = ResponseDTO.class)
                     )
@@ -194,9 +154,11 @@ public class CourseController {
             produces = {MediaType.APPLICATION_JSON_VALUE}
     )
     public ResponseEntity<ResponseDTO> updateCourse(@Valid @RequestBody CourseDTO courseDTO) {
-        boolean isCourseUpdated = courseService.updateCourse(courseDTO);
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
+        boolean isCourseUpdated = courseService.updateCourse(courseDTO, token);
         if (isCourseUpdated) {
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO(
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseDTO(
                     CourseConstants.STATUS_200, CourseConstants.MESSAGE_200));
         } else {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(
@@ -204,6 +166,53 @@ public class CourseController {
                             CourseConstants.STATUS_417, CourseConstants.MESSAGE_417_UPDATE)
             );
         }
+    }
+
+    @Operation(
+            summary = "Fetch Course by course code REST API",
+            description = "Course student details by email from the attendX application. " +
+                    "This will be mainly used to show all the course details in the UI. " +
+                    "This section fetches the course code, course name, course description course lecturer's email" +
+                    "course start date, course end date, and department name of the course."
+    )
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "HTTP Status OK",
+                            content = @Content(
+                                    schema = @Schema(implementation = StudentDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "HTTP Status Bad Request it may be causing due to invalid input",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "HTTP Status Not Found it may be causing due to trying to access non-existing course",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "HTTP Status Internal Server Error",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            )
+                    )
+            })
+    @GetMapping(path = "/course/{courseCode}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<CourseDTO> getStudentByEmail(@PathVariable String courseCode, @RequestParam(value = "get-details", defaultValue = "true") boolean getDetails) {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(courseService.getCourseByCourseCode(courseCode, getDetails, token));
     }
 
     @Operation(

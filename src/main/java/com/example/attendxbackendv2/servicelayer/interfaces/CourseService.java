@@ -2,6 +2,7 @@ package com.example.attendxbackendv2.servicelayer.interfaces;
 
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.CourseDTO;
 import com.example.attendxbackendv2.servicelayer.exceptions.CourseAlreadyExistsException;
+import com.example.attendxbackendv2.servicelayer.exceptions.InvalidCredentialsException;
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
 
 import java.util.List;
@@ -21,9 +22,10 @@ public interface CourseService {
      * It uses pagination and sorting by Course code.
      * @param pageNo page number of the result. See application.properties for the page size
      * @param ascending sorting order
+     * @param token the token for the security
      * @return the list of the CourseDTO requested
      */
-    List<CourseDTO> getAllCourses(int pageNo, boolean ascending);
+    List<CourseDTO> getAllCourses(int pageNo, boolean ascending, String token);
 
     /**
      * Fetch course details by course code .
@@ -34,17 +36,18 @@ public interface CourseService {
      * @return the requested CourseDTO if found
      * @throws ResourceNotFoundException if no such course found with the specified code
      */
-    CourseDTO getCourseByCourseCode(String courseCode, boolean getDetails) throws ResourceNotFoundException;
+    CourseDTO getCourseByCourseCode(String courseCode, boolean getDetails, String token) throws ResourceNotFoundException, InvalidCredentialsException;
 
     /**
      * Updates the existing Course by fetching it from the database and applying recent changes.
      *
      * @param courseDTO The DTO containing the Course's code as an identifier and updated fields.
+     * @param token the authorization & authentication token to validate the user
      * @return True if the update was successful.
      * @throws ResourceNotFoundException May be thrown if attempting to access a non-existing student
      *                                   or trying to change the department of the student to a non-existing department.
      */
-    boolean updateCourse(CourseDTO courseDTO);
+    boolean updateCourse(CourseDTO courseDTO, String token);
 
     /**
      * Enrolls a student to a course.

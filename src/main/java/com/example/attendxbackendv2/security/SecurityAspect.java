@@ -22,8 +22,13 @@ public class SecurityAspect {
         this.loginService = loginService;
     }
 
-    @Before("execution(* com.example.attendxbackendv2.presentationlayer.controllers.EditorController.*(..))")
-    public void secureEditorController(JoinPoint joinPoint) {
+    @Before("com.example.attendxbackendv2.security.Pointcuts.secureLecturerController() || " +
+            "com.example.attendxbackendv2.security.Pointcuts.createStudentInStudentController() || " +
+            "com.example.attendxbackendv2.security.Pointcuts.secureCreateCourse() || " +
+            "execution(* com.example.attendxbackendv2.presentationlayer.controllers.EditorController.*(..)) || " +
+            "com.example.attendxbackendv2.security.Pointcuts.createDepartment() || " +
+            "com.example.attendxbackendv2.security.Pointcuts.updateDepartmentId()")
+    public void combinedPointcutExpression() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("Authorization");
 
@@ -32,23 +37,46 @@ public class SecurityAspect {
         }
     }
 
-    @Before("com.example.attendxbackendv2.security.Pointcuts.createDepartment() || com.example.attendxbackendv2.security.Pointcuts.updateDepartmentId()")
-    public void secureDepartmentManagement(JoinPoint joinPoint) {
+    @Before("com.example.attendxbackendv2.security.Pointcuts.allMethodsInStudentController() || " +
+            "com.example.attendxbackendv2.security.Pointcuts.updateCourseInCourseController() && " +
+            "!com.example.attendxbackendv2.security.Pointcuts.createStudentInStudentController()")
+    public void secureStudentController(JoinPoint joinPoint) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("Authorization");
 
-        if (token == null || !loginService.validateToken(token).equalsIgnoreCase("EDITOR")) {
+        if (token == null ||
+                !(loginService.validateToken(token).equalsIgnoreCase("EDITOR") ||
+                loginService.validateToken(token).equalsIgnoreCase("LECTURER"))) {
             throw new InvalidCredentialsException("Invalid Token");
         }
     }
 
 
-    @Before("com.example.attendxbackendv2.security.Pointcuts.secureLecturerController() ")
-    public void secureLecturerController(JoinPoint joinPoint) {
+    @Before("com.example.attendxbackendv2.security.Pointcuts.allMethodsInCourseController() && " +
+            "!com.example.attendxbackendv2.security.Pointcuts.secureCreateCourse() && " +
+            "!com.example.attendxbackendv2.security.Pointcuts.updateCourseInCourseController() && " +
+            "!com.example.attendxbackendv2.security.Pointcuts.enrollCourseInCourseController()")
+    public void secureCourseEndpoints(JoinPoint joinPoint) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("Authorization");
 
-        if (token == null || !loginService.validateToken(token).equalsIgnoreCase("EDITOR")) {
+        if (token == null ||
+                !(loginService.validateToken(token).equalsIgnoreCase("EDITOR") ||
+                        loginService.validateToken(token).equalsIgnoreCase("LECTURER") ||
+                        loginService.validateToken(token).equalsIgnoreCase("STUDENT"))) {
+            throw new InvalidCredentialsException("Invalid Token");
+        }
+    }
+
+
+
+    @Before("com.example.attendxbackendv2.security.Pointcuts.enrollCourseInCourseController()")
+    public void secureEnrollingCourse(JoinPoint joinPoint){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
+
+        if (token == null ||
+                !(loginService.validateToken(token).equalsIgnoreCase("STUDENT"))) {
             throw new InvalidCredentialsException("Invalid Token");
         }
     }

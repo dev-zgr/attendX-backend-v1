@@ -3,9 +3,13 @@ package com.example.attendxbackendv2.servicelayer.implementations;
 import com.example.attendxbackendv2.datalayer.entities.*;
 import com.example.attendxbackendv2.datalayer.repositories.*;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.CourseDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.UserBaseDTO;
 import com.example.attendxbackendv2.servicelayer.exceptions.CourseAlreadyExistsException;
+import com.example.attendxbackendv2.servicelayer.exceptions.InvalidCredentialsException;
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
+import com.example.attendxbackendv2.servicelayer.exceptions.StudentAlreadyEnrolledException;
 import com.example.attendxbackendv2.servicelayer.interfaces.CourseService;
+import com.example.attendxbackendv2.servicelayer.interfaces.LoginService;
 import com.example.attendxbackendv2.servicelayer.mappers.CourseMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +32,16 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final StudentRepository studentRepository;
     private final SessionRepository sessionRepository;
+    private final LoginService loginService;
 
     @Autowired
-    public CourseServiceImpl(LecturerRepository lecturerRepository, DepartmentRepository departmentRepository, CourseRepository courseRepository, StudentRepository studentRepository, SessionRepository sessionRepository) {
+    public CourseServiceImpl(LecturerRepository lecturerRepository, DepartmentRepository departmentRepository, CourseRepository courseRepository, StudentRepository studentRepository, SessionRepository sessionRepository, LoginService loginService) {
         this.lecturerRepository = lecturerRepository;
         this.departmentRepository = departmentRepository;
         this.courseRepository = courseRepository;
         this.studentRepository = studentRepository;
         this.sessionRepository = sessionRepository;
+        this.loginService = loginService;
     }
 
 
@@ -61,35 +67,75 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public List<CourseDTO> getAllCourses(int pageNo, boolean ascending) {
+    public List<CourseDTO> getAllCourses(int pageNo, boolean ascending, String token) {
+        String loginRole = loginService.validateToken(token);
         Pageable pageable;
-        if (ascending) {
-            pageable = PageRequest.of(pageNo, pageSize, Sort.by("courseCode").ascending());
+        if(loginRole.equalsIgnoreCase("EDITOR") || loginRole.equalsIgnoreCase("STUDENT")){
+            if (ascending) {
+                pageable = PageRequest.of(pageNo, pageSize, Sort.by("courseCode").ascending());
+            } else {
+                pageable = PageRequest.of(pageNo, pageSize, Sort.by("courseCode").descending());
+            }
+            List<CourseEntity> courseEntities = courseRepository.findAll(pageable).getContent();
+            return courseEntities.stream().map(courseEntity -> CourseMapper.mapToCourseDTO(courseEntity, new CourseDTO(), false)).toList();
         } else {
-            pageable = PageRequest.of(pageNo, pageSize, Sort.by("courseCode").descending());
+            UserBaseDTO userBaseEntity = loginService.getUserByToken(UUID.fromString(token));
+            LecturerEntity lecturer = lecturerRepository.findLecturerEntityByEmailIgnoreCase(userBaseEntity.getEmail())
+                    .orElseThrow(() -> new ResourceNotFoundException("Lecturer", "email",userBaseEntity.getEmail()));
+            if (ascending) {
+                pageable = PageRequest.of(pageNo, pageSize, Sort.by("courseCode").ascending());
+            } else {
+                pageable = PageRequest.of(pageNo, pageSize, Sort.by("courseCode").descending());
+            }
+            List<CourseEntity> courseEntities = courseRepository.findAllByLecturer(pageable,lecturer).getContent();
+            return courseEntities.stream().map(courseEntity -> CourseMapper.mapToCourseDTO(courseEntity, new CourseDTO(), false)).toList();
         }
-        List<CourseEntity> courseEntities = courseRepository.findAll(pageable).getContent();
-        return courseEntities.stream().map(courseEntity -> CourseMapper.mapToCourseDTO(courseEntity, new CourseDTO(), false)).toList();
+
+
 
     }
 
     @Override
     @Transactional
-    public CourseDTO getCourseByCourseCode(String courseCode, boolean getDetails) throws ResourceNotFoundException {
+    public CourseDTO getCourseByCourseCode(String courseCode, boolean getDetails, String token) throws ResourceNotFoundException, InvalidCredentialsException {
+        String loginRole = loginService.validateToken(token);
+        Pageable pageable;
+
         CourseEntity course = courseRepository.findCourseEntityByCourseCodeIgnoreCase(courseCode)
                 .orElseThrow(() -> new ResourceNotFoundException("Course", "courseCode", courseCode));
-        return CourseMapper.mapToCourseDTO(course, new CourseDTO(), getDetails);
+        if(loginRole.equalsIgnoreCase("STUDENT")){
+            CourseDTO courseDTO =  CourseMapper.mapToCourseDTO(course, new CourseDTO(), getDetails);
+            courseDTO.setCourseSessions(null);
+            courseDTO.setEnrolledStudents(null);
+            return courseDTO;
+        }else if(loginRole.equalsIgnoreCase("LECTURER")){
+            UserBaseDTO userBaseEntity = loginService.getUserByToken(UUID.fromString(token));
+            LecturerEntity lecturer = lecturerRepository.findLecturerEntityByEmailIgnoreCase(userBaseEntity.getEmail())
+                    .orElseThrow(() -> new ResourceNotFoundException("Lecturer", "email",userBaseEntity.getEmail()));
+            if(lecturer.getCourses().stream().anyMatch(lecturerCourse -> lecturerCourse.getCourseCode().equalsIgnoreCase(courseCode))){
+                return CourseMapper.mapToCourseDTO(course, new CourseDTO(), getDetails);
+            }else{
+                throw new InvalidCredentialsException("Invalid Token");
+            }
+        }else{
+            return CourseMapper.mapToCourseDTO(course, new CourseDTO(), getDetails);
+        }
     }
 
     @Override
     @Transactional
-    public boolean updateCourse(CourseDTO courseDTO) {
+    public boolean updateCourse(CourseDTO courseDTO, String token){
         boolean isUpdated = false;
         //First find course
         CourseEntity courseToUpdate = courseRepository.findCourseEntityByCourseCodeIgnoreCase(courseDTO.getCourseCode())
                 .orElseThrow(() -> new ResourceNotFoundException("Course",
                         "courseCode",
                         courseDTO.getCourseCode()));
+
+        UserBaseDTO userBaseEntity = loginService.getUserByToken(UUID.fromString(token));
+        if(!courseToUpdate.getLecturer().getEmail().equalsIgnoreCase(userBaseEntity.getEmail()) && userBaseEntity.getRole().equalsIgnoreCase("LECTURER")){
+            throw new InvalidCredentialsException("Invalid Token");
+        }
         // Then find department by department name if not found then throw exception
         DepartmentEntity oldDepartment = departmentRepository.findByDepartmentNameIgnoreCase(courseToUpdate.getDepartment().getDepartmentName())
                 .orElseThrow(() -> new ResourceNotFoundException("Department",
@@ -100,6 +146,7 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new ResourceNotFoundException("Lecturer",
                         "email",
                         courseDTO.getLecturerEmail()));
+
         // Then Find The students the course entity
         Set<StudentEntity> oldStudents = new HashSet<>(
                 courseToUpdate.getEnrolledStudents().stream().map(student -> studentRepository.findStudentEntityByStudentId(student.getStudentId())
@@ -185,6 +232,9 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new ResourceNotFoundException("Course", "courseCode", courseCode));
         StudentEntity student = studentRepository.findStudentEntityByStudentId(studentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Student", "studentId", studentId));
+        if(course.getEnrolledStudents().stream().anyMatch(studentEntity -> studentEntity.getStudentId().equalsIgnoreCase(studentId))){
+            throw new StudentAlreadyEnrolledException(studentId, courseCode);
+        }
         course.enrollStudent(student);
         courseRepository.save(course);
         student.enrollToCourse(course);

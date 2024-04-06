@@ -145,5 +145,17 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(StudentAlreadyEnrolledException.class)
+    public ResponseEntity<ErrorResponseDTO> handleStudentAlreadyEnrolledException(StudentAlreadyEnrolledException exception,
+                                                                          WebRequest webRequest){
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
+                webRequest.getDescription(false),
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
 }
 
