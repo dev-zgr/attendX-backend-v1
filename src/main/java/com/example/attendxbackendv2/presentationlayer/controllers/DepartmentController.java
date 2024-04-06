@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -101,13 +100,6 @@ public class DepartmentController {
                             content = @Content(
                                     schema = @Schema(implementation = ErrorResponseDTO.class)
                             )
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "HTTP Status Not Found it may be causing due trying to access non-existing lecturer",
-                            content = @Content(
-                                    schema = @Schema(implementation = ErrorResponseDTO.class)
-                            )
                     )
             })
     @GetMapping(path = "/department/{departmentName}",
@@ -115,7 +107,9 @@ public class DepartmentController {
     public ResponseEntity<DepartmentDTO> getDepartmentByName(
             @PathVariable String departmentName,
             @RequestParam(name = "get-details", defaultValue = "true", required = false) boolean getDetails) {
-        return ResponseEntity.ok(departmentService.fetchDepartmentDetailsByDepartmentName(departmentName, getDetails));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(departmentService.fetchDepartmentDetailsByDepartmentName(departmentName, getDetails));
     }
 
 
@@ -185,13 +179,12 @@ public class DepartmentController {
             }
     )
     @PutMapping(path = "/department",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDTO> updateDepartment(@Valid @RequestBody DepartmentDTO departmentDTO) {
         boolean isUpdated = departmentService.updateDepartmentId(departmentDTO);
         if (isUpdated) {
             return ResponseEntity
-                    .status(HttpStatus.OK)
+                    .status(HttpStatus.ACCEPTED)
                     .body(new ResponseDTO(DepartmentConstants.STATUS_200, DepartmentConstants.MESSAGE_200));
         } else {
             return ResponseEntity
@@ -201,43 +194,43 @@ public class DepartmentController {
     }
 
 
-    @Operation(
-            summary = "Delete Department REST API",
-            description = "Delete department from the attendX application"
-    )
-    @ApiResponses(
-            {
-                    @ApiResponse(
-                            responseCode = "202",
-                            description = "HTTP Status ACCEPTED",
-                            content = @Content(
-                                    schema = @Schema(implementation = ResponseDTO.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "HTTP Status Internal Server Error",
-                            content = @Content(
-                                    schema = @Schema(implementation = ErrorResponseDTO.class)
-                            )
-                    )
-            }
-    )
-    @DeleteMapping(path = "/department",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<ResponseDTO> deleteDepartment(@RequestParam(name = "department_name", defaultValue = "null") @Size(min = 8, max = 60) String departmentName) {
-        boolean isDeleted = departmentService.deleteDepartment(departmentName);
-        if (isDeleted) {
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new ResponseDTO(DepartmentConstants.STATUS_200, DepartmentConstants.MESSAGE_200));
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDTO(DepartmentConstants.STATUS_417, DepartmentConstants.MESSAGE_417_UPDATE));
-        }
-    }
+//    @Operation(
+//            summary = "Delete Department REST API",
+//            description = "Delete department from the attendX application"
+//    )
+//    @ApiResponses(
+//            {
+//                    @ApiResponse(
+//                            responseCode = "200",
+//                            description = "HTTP Status OK",
+//                            content = @Content(
+//                                    schema = @Schema(implementation = ResponseDTO.class)
+//                            )
+//                    ),
+//                    @ApiResponse(
+//                            responseCode = "500",
+//                            description = "HTTP Status Internal Server Error",
+//                            content = @Content(
+//                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+//                            )
+//                    )
+//            }
+//    )
+//    @DeleteMapping(path = "/department",
+//            consumes = {MediaType.APPLICATION_JSON_VALUE},
+//            produces = {MediaType.APPLICATION_JSON_VALUE})
+//    public ResponseEntity<ResponseDTO> deleteDepartment(@RequestParam(name = "department_name", defaultValue = "null") @Size(min = 8, max = 60) String departmentName) {
+//        boolean isDeleted = departmentService.deleteDepartment(departmentName);
+//        if (isDeleted) {
+//            return ResponseEntity
+//                    .status(HttpStatus.OK)
+//                    .body(new ResponseDTO(DepartmentConstants.STATUS_200, DepartmentConstants.MESSAGE_200));
+//        } else {
+//            return ResponseEntity
+//                    .status(HttpStatus.EXPECTATION_FAILED)
+//                    .body(new ResponseDTO(DepartmentConstants.STATUS_417, DepartmentConstants.MESSAGE_417_UPDATE));
+//        }
+//    }
 
 
 }

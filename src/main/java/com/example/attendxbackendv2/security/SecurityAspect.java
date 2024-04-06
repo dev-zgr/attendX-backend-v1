@@ -23,7 +23,28 @@ public class SecurityAspect {
     }
 
     @Before("execution(* com.example.attendxbackendv2.presentationlayer.controllers.EditorController.*(..))")
-    public void beforeControllerMethodExecution(JoinPoint joinPoint) {
+    public void secureEditorController(JoinPoint joinPoint) {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
+
+        if (token == null || !loginService.validateToken(token).equalsIgnoreCase("EDITOR")) {
+            throw new InvalidCredentialsException("Invalid Token");
+        }
+    }
+
+    @Before("com.example.attendxbackendv2.security.Pointcuts.createDepartment() || com.example.attendxbackendv2.security.Pointcuts.updateDepartmentId()")
+    public void secureDepartmentManagement(JoinPoint joinPoint) {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
+
+        if (token == null || !loginService.validateToken(token).equalsIgnoreCase("EDITOR")) {
+            throw new InvalidCredentialsException("Invalid Token");
+        }
+    }
+
+
+    @Before("com.example.attendxbackendv2.security.Pointcuts.secureLecturerController() ")
+    public void secureLecturerController(JoinPoint joinPoint) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("Authorization");
 

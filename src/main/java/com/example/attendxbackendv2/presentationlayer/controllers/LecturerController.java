@@ -65,7 +65,7 @@ public class LecturerController {
     @PostMapping(path = "/lecturer", consumes = "application/json")
     public ResponseEntity<ResponseDTO> createLecturer(@Valid @RequestBody LecturerDTO lecturerDTO) {
         lecturerService.createLecturer(lecturerDTO);
-        return ResponseEntity.status(201).body(new ResponseDTO(
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(
                 Integer.toString(HttpStatus.CREATED.value()),
                 LecturerContents.MESSAGE_201));
 
@@ -201,8 +201,8 @@ public class LecturerController {
         boolean isUpdated = lecturerService.updateLecturer(lecturerDTO);
         if (isUpdated) {
             return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new ResponseDTO(LecturerContents.STATUS_200, LecturerContents.MESSAGE_200));
+                    .status(HttpStatus.ACCEPTED)
+                    .body(new ResponseDTO(LecturerContents.STATUS_201, LecturerContents.MESSAGE_200));
         } else {
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)

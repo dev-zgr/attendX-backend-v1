@@ -66,7 +66,7 @@ public class EditorController {
     @PostMapping(path = "/editor", consumes = "application/json")
     public ResponseEntity<ResponseDTO> createEditor(@Valid @RequestBody EditorDTO editorDTO) {
         editorService.createEditor(editorDTO);
-        return ResponseEntity.status(201).body(new ResponseDTO(
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(
                 Integer.toString(HttpStatus.CREATED.value()),
                 EditorConstants.MESSAGE_201));
     }
