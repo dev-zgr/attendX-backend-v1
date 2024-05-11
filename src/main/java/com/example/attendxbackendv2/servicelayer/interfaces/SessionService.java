@@ -1,5 +1,11 @@
 package com.example.attendxbackendv2.servicelayer.interfaces;
 
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.SessionCardDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.SessionDTO;
+
+import java.util.List;
+import java.util.Map;
+
 public interface SessionService {
 
     /**
@@ -25,4 +31,12 @@ public interface SessionService {
      * @return byte array of the attendance report
      */
     byte[] getAttendanceReport(Long sessionId);
+
+    /**
+     * This method lists the upcoming sessions for a student identified by their token.
+     *
+     * @param token The token of the student.
+     * @return A list of upcoming sessions for the student.
+     */
+    Map<String, List<SessionCardDTO>> getUpcomingSessionByToken(String token);
 }

@@ -2,6 +2,8 @@ package com.example.attendxbackendv2.presentationlayer.controllers;
 
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ErrorResponseDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ResponseDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.SessionCardDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.SessionDTO;
 import com.example.attendxbackendv2.servicelayer.contants.CourseConstants;
 import com.example.attendxbackendv2.servicelayer.contants.SessionConstants;
 import com.example.attendxbackendv2.servicelayer.interfaces.SessionService;
@@ -11,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Tag(
         name = "Session",
@@ -25,7 +34,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/api/v1", produces = "application/json")
 @Validated
-@CrossOrigin(origins = "${attendx.crossorigin.url}")
+@CrossOrigin(origins = "*")
 public class SessionController {
 
 
@@ -147,6 +156,43 @@ public class SessionController {
     }
 
 
+    @Operation(
+            summary = "Get the Sessions for Lecturer REST API",
+            description = "Fethces the Sessions for Lecturer REST API"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK",
+                    content = @Content(
+                            schema = @Schema(implementation = ResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "HTTP Status Bad Request this may be cause due to try to start the session with expired date",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
+    })
+    @GetMapping(path = "/session", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Map<String,List<SessionCardDTO>>> getUpcomingSessionByToken() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
+        Map<String,List<SessionCardDTO>> upcomingSession = sessionService.getUpcomingSessionByToken(token);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(upcomingSession);
+    }
+
 
     @GetMapping(path = "/session/{sessionId}",
             produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
@@ -155,7 +201,6 @@ public class SessionController {
 
         byte[] file = sessionService.getAttendanceReport(sessionId);
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDispositionFormData("attachment", "attendance.pdf");
         return ResponseEntity
                 .ok()

@@ -2,6 +2,7 @@ package com.example.attendxbackendv2.servicelayer.mappers;
 
 import com.example.attendxbackendv2.datalayer.entities.SessionEntity;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.AddressDTO;
+import com.example.attendxbackendv2.presentationlayer.datatransferobjects.SessionCardDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.SessionDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.StudentDTO;
 
@@ -19,9 +20,15 @@ public class SessionMapper {
                         entry -> StudentMapper.mapStudentEntityToStudentDTO(entry.getKey(), new StudentDTO(), new AddressDTO(), false),
                         Map.Entry::getValue
                 ));
-
-//        sessionDTO.setAttendance(attendance);
         sessionDTO.setSessionId(sessionEntity.getSessionId());
         return sessionDTO;
+    }
+
+    public static SessionCardDTO mapToSessionCard(SessionEntity sessionEntity, SessionCardDTO sessionCardDTO) {
+        sessionCardDTO.setSessionDate(sessionEntity.getSessionDate().toString());
+        sessionCardDTO.setSessionId(sessionEntity.getSessionId());
+        sessionCardDTO.setCourseCode(sessionEntity.getCourse().getCourseCode());
+        sessionCardDTO.setCourseName(sessionEntity.getCourse().getCourseName());
+        return sessionCardDTO;
     }
 }

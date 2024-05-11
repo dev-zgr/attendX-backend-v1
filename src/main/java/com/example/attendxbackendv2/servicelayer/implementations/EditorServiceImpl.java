@@ -9,7 +9,9 @@ import com.example.attendxbackendv2.servicelayer.exceptions.EditorAlreadyExistEx
 import com.example.attendxbackendv2.servicelayer.exceptions.ResourceNotFoundException;
 import com.example.attendxbackendv2.servicelayer.interfaces.EditorService;
 import com.example.attendxbackendv2.servicelayer.mappers.EditorMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +28,28 @@ public class EditorServiceImpl implements EditorService {
 
     private final EditorRepository editorRepository;
 
+    @Autowired
     public EditorServiceImpl(EditorRepository editorRepository) {
         this.editorRepository = editorRepository;
+    }
+
+    @PostConstruct
+    @Transactional
+    public void init() {
+        if(editorRepository.count() == 0) {
+            EditorEntity editorEntity = new EditorEntity("admin",
+                    "admin",
+                    "admin@admin.com",
+                    "1234567890",
+                    "admin123",
+                    new AddressEmbeddable("admins street",
+                            "admin dorm",
+                            "admin city",
+                            "admin state",
+                            "USA",
+                            "98363"));
+            editorRepository.save(editorEntity);
+        }
     }
 
     @Override
@@ -69,9 +91,6 @@ public class EditorServiceImpl implements EditorService {
                 .orElseThrow(() -> new ResourceNotFoundException("Editor",
                         "email",
                         editorDTO.getEmail()));
-
-
-        // Update other fields on Editor
         EditorMapper.mapEditorDTOToUserBaseEntity(editorToUpdate, editorDTO, new AddressEmbeddable());
 
         editorRepository.save(editorToUpdate);

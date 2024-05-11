@@ -7,7 +7,7 @@ plugins {
 
 jib {
     to {
-        image = 'devzgr007/attendx-backend:v1'
+        image = 'devzgr007/attendx-backend:v3'
     }
 }
 

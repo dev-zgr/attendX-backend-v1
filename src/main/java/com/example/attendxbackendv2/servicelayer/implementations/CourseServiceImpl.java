@@ -91,8 +91,6 @@ public class CourseServiceImpl implements CourseService {
             return courseEntities.stream().map(courseEntity -> CourseMapper.mapToCourseDTO(courseEntity, new CourseDTO(), false)).toList();
         }
 
-
-
     }
 
     @Override

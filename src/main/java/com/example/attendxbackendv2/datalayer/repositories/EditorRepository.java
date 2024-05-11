@@ -9,6 +9,4 @@ import java.util.Optional;
 @Repository
 public interface EditorRepository extends JpaRepository<EditorEntity, Long>, PagingAndSortingRepository<EditorEntity,Long> {
     Optional<EditorEntity> findEditorEntitiesByEmailIgnoreCase(String email);
-
-
 }
