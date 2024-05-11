@@ -3,7 +3,6 @@ package com.example.attendxbackendv2.presentationlayer.controllers;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ErrorResponseDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.ResponseDTO;
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.SessionCardDTO;
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.SessionDTO;
 import com.example.attendxbackendv2.servicelayer.contants.CourseConstants;
 import com.example.attendxbackendv2.servicelayer.contants.SessionConstants;
 import com.example.attendxbackendv2.servicelayer.interfaces.SessionService;
@@ -26,7 +25,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Tag(
         name = "Session",

@@ -1,7 +1,6 @@
 package com.example.attendxbackendv2.servicelayer.interfaces;
 
 import com.example.attendxbackendv2.presentationlayer.datatransferobjects.SessionCardDTO;
-import com.example.attendxbackendv2.presentationlayer.datatransferobjects.SessionDTO;
 
 import java.util.List;
 import java.util.Map;
